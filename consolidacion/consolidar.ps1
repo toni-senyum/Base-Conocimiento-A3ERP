@@ -37,7 +37,8 @@ $KeepLogs = 30
 
 # Raíces donde buscar repos git (recursivo, hasta $ProfundidadRepos niveles)
 $RaicesRepos = @(
-    'C:\SENYUM'
+    'C:\SENYUM',
+    'C:\Users\Toni.Salvado\OneDrive - SENYUM\Escritorio\Senyum\Clientes'
 )
 $ProfundidadRepos = 5
 $ExcluirDirs = @('node_modules', 'bin', 'obj', '.vs', 'packages', '.git')   # además de base-conocimiento*
