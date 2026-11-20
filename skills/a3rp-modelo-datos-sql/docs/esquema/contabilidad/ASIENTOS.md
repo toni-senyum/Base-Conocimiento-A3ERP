@@ -80,6 +80,18 @@ asiento completo (verificado: `DEBE` y `HABER` cuadran exactos por asiento, part
 - Para localizar los apuntes creados por una DLL: `NUMAPUNTE > <máximo anterior>` y un patrón en
   `DESCAPU` (p. ej. `'%inmovilizado ' + código + ' %'`). Ojo con el padding de los códigos dentro del
   texto si la DLL no los recorta.
+- **`NUMASIENTO` no reinicia por ejercicio** en las BD vistas: en JALLUCA (2024-2025) la secuencia
+  continúa de un año al siguiente (2024: apertura `A` = 1 … cierre `T` = 780; 2025: `A` = 782 …), con
+  algún hueco, y no hay asiento 0 (verificado por SQL, proyecto RocRoi, 2026-11). No asumir que cada
+  ejercicio empieza en 1.
+- 🔴 **in&out de APUNTES renumera los asientos**: no conserva el `NUMASIENTO` del `.xls` ni sus
+  huecos; los numera de forma consecutiva y encadena un ejercicio tras otro (UR_RAFTING: el `.xls` se
+  preparó con 1..3245 y 3246..5734; salió 1..3227 y 3229..5716). El contenido, los saldos y los
+  recuentos por `TIPAPU` coinciden (38 de 44 comprobaciones OK; los 6 KO eran solo la numeración y
+  un exceso de cuentas). Validar por contenido/saldos, nunca emparejando por `NUMASIENTO`
+  (verificado por SQL, proyecto RocRoi, 2026-11).
+- `FECHACIERRE` vale `1900-01-01` cuando no hay cierre fijado, tanto en `DATOSCON` como en
+  `DATOSCONFIG` (verificado en JALLUCA, UR_RAFTING y PRELUDE, 2026-11).
 - Existe una vista nativa de A3ERP, `Ape_Saldos_PYG_Version_NPGC`, que agrega estos apuntes por
   cuenta/mes/ejercicio y los clasifica ya según el modelo oficial abreviado de Pérdidas y Ganancias
   español — ver ficha propia. Suele ser preferible a agregar `__ASIENTOS`/`APUNTES` a mano para

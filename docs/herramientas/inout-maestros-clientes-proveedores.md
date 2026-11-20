@@ -28,6 +28,10 @@ Repo del proyecto (documentación completa):
   `skills/a3rp-modelo-datos-sql/docs/esquema/clientes/Clientes.md`).
 - Si se da de alta un código que se había borrado y cuya cuenta se conservó por tener apuntes, se
   reutiliza esa cuenta: no se crea otra y los apuntes quedan intactos.
+- En una carga grande (CLIENTES de ~2.400 fichas) in&out puede dar **timeout** a mitad y aun así
+  terminarla: comprobarlo siempre por SQL (diferencias a 0) y comparando con la foto de antes, sin dar
+  la carga por fallida ni reimportar a ciegas (verificado en ESCOLA_ESPORTS_AVENTURA_RR, proyecto
+  RocRoi, 2026-11: 0 inesperados frente a la foto, recuentos iguales).
 
 ## Direcciones
 
@@ -41,6 +45,13 @@ Repo del proyecto (documentación completa):
   `POBFISCAL`, `PROVIFISCAL`, `PAISFISCAL`). Si el país no es `ES`, `PROVIFISCAL` vacío.
 - En el alta, `PROVIFISCAL` / `PAISFISCAL` toman el valor por defecto de la empresa (en OUTDOOR,
   `08` / `ES`) aunque el cliente sea extranjero: enviarlos en el fichero.
+- `PROVIFISCAL` se guarda con **relleno** de ancho fijo (`'  22'`, no `'22'`; igual que `CODPROVI`
+  `'  25'`): comparar con `LTRIM`/`RTRIM` (verificado en `X_DEMO`, proyecto RocRoi, 2026-11).
+- Al corregir la dirección fiscal de fichas extranjeras cambia también `TIPODOCNIF` en `CLIENTES` /
+  `PROVEED` y en su fila de `__ORGANIZACION`: es un efecto esperado, no un fallo (84 filas en la
+  corrección de ESCOLA_ESPORTS_AVENTURA_RR, proyecto RocRoi, 2026-11).
+- Para no borrar nada, las fichas **sin dirección o sin CP** van en ficheros aparte con esa columna
+  omitida (consecuencia de que una celda vacía borra el valor).
 
 ## Datos
 
