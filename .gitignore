@@ -4,3 +4,4 @@ obj/
 *.suo
 Thumbs.db
 scripts/config.ini
+*.bak*
