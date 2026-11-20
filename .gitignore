@@ -7,3 +7,4 @@ scripts/config.ini
 *.bak*
 consolidacion/estado.json
 consolidacion/logs/
+consolidacion/trabajo/
