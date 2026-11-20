@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  <DATAPACKET Version="2.0">
+<METADATA>
+<FIELDS>
+<FIELD attrname="Tabla" fieldtype="string.uni" WIDTH="200"/>
+<FIELD attrname="Indice" fieldtype="string.uni" WIDTH="500"/>
+<FIELD attrname="Columnas" fieldtype="string.uni" WIDTH="400"/>
+<FIELD attrname="Clave" fieldtype="boolean"/>
+<FIELD attrname="Unico" fieldtype="boolean"/>
+<FIELD attrname="Agrupado" fieldtype="boolean"/>
+</FIELDS>
+<PARAMS/>
+</METADATA>
+<ROWDATA>
+<ROW Tabla="__MAPPINGARTICULOS" Indice="IDX__MAPPINGARTICULOS" Columnas="CODART,CODARTMANT" Clave="FALSE" Unico="TRUE"/>
+<ROW Tabla="__MAPPINGARTICULOS" Indice="PK___MAPPINGARTICULOS" Columnas="ID" Clave="TRUE" Unico="FALSE" Agrupado="TRUE"/>
+<ROW Tabla="ARTICULO" Indice="IDXGAMA" Columnas="CODGAM"/>
+<ROW Tabla="ARTICULO" Indice="IDXPRODUCTO" Columnas="PRODUCTO"/>
+<ROW Tabla="__ACTIVIDAD" Indice="PK___ACTIVIDAD" Columnas="CODACTIVIDAD" Clave="TRUE" Unico="FALSE" Agrupado="TRUE"/>
+<ROW Tabla="__MAPPINGARTICULOS" Indice="IDX_FK_SIE_ARTICULO__MAPPINGART00" Columnas="CODART" Clave="FALSE" Unico="FALSE" Agrupado="FALSE"/>
+<ROW Tabla="__MAPPINGARTICULOS" Indice="IDX_FK_SIE_ARTICULO__MAPPINGART01" Columnas="CODARTMANT" Clave="FALSE" Unico="FALSE" Agrupado="FALSE"/>
+<ROW Tabla="__CLIENTES" Indice="IDX_FK_SIE_DOCUPAGO__CLIENTES00" Columnas="DOCPAGAUTO" Clave="FALSE" Unico="FALSE" Agrupado="FALSE"/>
+<ROW Tabla="__CLIENTES" Indice="IDX_FK_SIE_FORMAPAG__CLIENTES00" Columnas="FORPAGAUTO" Clave="FALSE" Unico="FALSE" Agrupado="FALSE"/>
+<ROW Tabla="LINEALBA" Indice="IDX_FK_SIE_PERSONALINEALBA00" Columnas="CODPER" Clave="FALSE" Unico="FALSE" Agrupado="FALSE"/>
+<ROW Tabla="LINEALBA" Indice="IDX_FK_SIE_TECNICONEXUSLINEALBA00" Columnas="CODTECNEXUS" Clave="FALSE" Unico="FALSE" Agrupado="FALSE"/>
+<ROW Tabla="LINEALBA" Indice="IDX_FK_SIE___PROVEEDLINEALBA00" Columnas="CODASESOR" Clave="FALSE" Unico="FALSE" Agrupado="FALSE"/>
+<ROW Tabla="LINEALBA" Indice="IDX_FK_SIE_PERSONALINEALBA01" Columnas="CODCOMA3" Clave="FALSE" Unico="FALSE" Agrupado="FALSE"/>
+</ROWDATA>
+</DATAPACKET>

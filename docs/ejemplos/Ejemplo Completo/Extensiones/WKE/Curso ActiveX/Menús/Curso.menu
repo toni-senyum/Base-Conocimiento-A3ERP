@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<NAVEGADOR>
+    <MENUS>
+        <GRUPO Titulo="Curso a3ERPActiveX" Imagen="Extensiones/WKE/Curso ActiveX/Iconos/ActiveX.bmp" IdOrd="80001">
+            <CATEGORIAS>
+                <CATEGORIA Titulo="Mis favoritos" Imagen="" IdOrd="80002">
+                    <OPCIONES>
+                        <OPCION Titulo="Aplicación de ejemplo (exe)" Imagen="Extensiones/WKE/Curso ActiveX/Iconos/iconoEXE.bmp" Externa="T" Id="IdOp1" Programa="Extensiones\WKE\Curso ActiveX\Binarios\ProyectoEXE.EXE" Parametros=":Empresa :Usuario :Password" IdOrd="80003" Categoria="Curso ActiveX"></OPCION>
+						<OPCION Titulo="Aplicación de ejemplo (ActiveX)" Imagen="Extensiones/WKE/Curso ActiveX/Iconos/iconoXDLL.bmp" Externa="T" Id="IdOp2" Programa="@ProyectoDLL.CursoDll@LLAMADATEST" Parametros=":Empresa :Usuario :Password" IdOrd="80004" Categoria="Curso ActiveX"></OPCION>
+						<OPCION Titulo="Aplicación de ejemplo (dll win32)" Imagen="Extensiones/WKE/Curso ActiveX/Iconos/iconoDLL.bmp" Externa="T" Id="IdOp3" Programa="Extensiones\WKE\Curso ActiveX\Binarios\DelphiDllWin32.dll@EjemploPantalla" IdOrd="80005" Categoria="Curso ActiveX"></OPCION>
+                    </OPCIONES>
+                </CATEGORIA>
+                <CATEGORIA Titulo="Curso ActiveX" Imagen="" IdOrd="80006">
+                    <OPCIONES>
+                        <OPCION Titulo="Aplicación de ejemplo (exe)" Imagen="Extensiones/WKE/Curso ActiveX/Iconos/iconoEXE.bmp" Externa="T" Id="IdOp1" Programa="Extensiones\WKE\Curso ActiveX\Binarios\ProyectoEXE.EXE" Parametros=":Empresa :Usuario :Password" IdOrd="80007" Categoria="Curso ActiveX"></OPCION>
+						<OPCION Titulo="Aplicación de ejemplo (ActiveX)" Imagen="Extensiones/WKE/Curso ActiveX/Iconos/iconoXDLL.bmp" Externa="T" Id="IdOp2" Programa="@ProyectoDLL.CursoDll@LLAMADATEST" Parametros=":Empresa :Usuario :Password" IdOrd="80008" Categoria="Curso ActiveX"></OPCION>
+						<OPCION Titulo="Aplicación de ejemplo (dll win32)" Imagen="Extensiones/WKE/Curso ActiveX/Iconos/iconoDLL.bmp" Externa="T" Id="IdOp3" Programa="Extensiones\WKE\Curso ActiveX\Binarios\DelphiDllWin32.dll@EjemploPantalla" IdOrd="80009" Categoria="Curso ActiveX"></OPCION>
+                    </OPCIONES>
+                </CATEGORIA>
+            </CATEGORIAS>
+        </GRUPO>
+    </MENUS>
+</NAVEGADOR>

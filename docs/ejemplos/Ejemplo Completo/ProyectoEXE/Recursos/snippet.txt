@@ -1,0 +1,84 @@
+﻿// Indicar detalle artículo con DUS
+public class LineaDetalleParametros : ILineaDetalleParametros
+{
+    public DateTime FechaCaducidad { get; set; }
+    public int Linea { get; set; }
+    public string Lote { get; set; }
+    public string NumeroSerie { get; set; }
+    public string Ubicacion { get; set; }
+    public double UnidadesStock { get; set; }
+    public double UnidadesVenta { get; set; }
+}
+
+// Uno con lote y otro con fechas
+LineaDetalleParametros param = new LineaDetalleParametros();
+
+NaxItem.NuevaLinea();
+NaxItem.AsStringLin["CODART"] = "L2";
+NaxItem.AsFloatLin["UNIDADESSTOCK"] = 3;
+NaxItem.AsFloatLin["UNIDADES"] = 3;
+param.Lote = "l1";
+param.UnidadesStock = 3;
+param.UnidadesVenta = 3;
+((ILineaDetalle)NaxItem).AnadirDetalle(param);
+NaxItem.AnadirLinea();   
+------------------
+
+// Usar métodos para obtener valores de las lineas
+object []lineas = ((ILineasDocumento)documento).ObtenerLineas();
+
+
+            for (int l = 1; (l <= (int)lineas[0]); l++)
+            {
+                object[] item = (lineas[l] as object[]);
+                for (int c = 1; (c <= (int)item[0]); c++)
+                {
+                    object[] item2 = (item[c] as object[]);
+                    
+                        if (item2[0].ToString().ToUpper() == "NUMLINALB")
+                            log.Escribir(Convert.ToString(item2[1]));
+                    
+                }
+            }
+
+
+// Trabajar con subdetalles
+((ILineaSubdetalle)documento).AnadirSubdetalle 
+
+------------
+Oportunidades opor = new Oportunidades();
+            var item = (IOportunidad)opor.Store.Nuevo();
+            var datosLin = (ILineaOportunidad)item.Lineas.Nueva();
+            var datosOper = (IDatos)item;
+
+            datosOper.AsString["DESCRIPCION"] = "test";
+            datosOper.AsString["CODMON"] = "EURO";
+            datosOper.AsString["CODREP"] = "1";
+            datosOper.AsString["CODPER"] = "       1";
+            datosOper.AsFloat["FECHA"] = DateTime.Now.ToOADate();
+            datosOper.AsString["ID_ORGANIZACION"] = "5";
+            datosOper.AsString["TELEFONO"] = "123.123.123";
+            datosOper.AsString["OBSERVACIONES"] = "Observaciones...";
+
+            item.Datos.AsInteger["ID_PROCEDENCIA"] = 1;
+            item.Datos.AsInteger["ID_SITUACION"] = 1;
+            item.Datos.AsBoolean["P_GENDIS"] = false;
+            item.Datos.AsInteger["IMPORTE"] = 666;
+            item.Datos.AsInteger["PORCENTAJEEXITO"] = 1;
+            item.Datos.AsString["EMAIL"] = "pruebas@WKE.es";
+            item.Datos.Clear("FECHAPREVISTA");
+
+            datosLin.Datos.AsString["CODART"] = "21";
+            datosLin.Datos.AsString["DESCRIPCION"] = "Linea de oportunidad";
+            datosLin.Datos.AsInteger["PRECIO"] = 500;
+
+            opor.Store.Guardar(datosOper);
+------------
+//Ayudas de sintaxis
+String.Format("{0:dd/MM/yyyy}", DateTime.Now)
+.Buscar(new object[] { "       1", "2" })
+
+string conexioncompleta = Conexion.ConexionSql.GenerarConexion(enlace.Conexion, enlace.Usuario, "12345");
+Conexion.ConexionSql.AbrirConexion(conexioncompleta);
+DataTable dtResult = Conexion.ConexionSql.Buscar("select docpag from docupago where descdoc like '%efectivo%'");
+dtResult.Rows[0].Field<string>("DocPag");

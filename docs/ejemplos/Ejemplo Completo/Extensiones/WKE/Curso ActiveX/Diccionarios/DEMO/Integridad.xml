@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  <DATAPACKET Version="2.0">
+<METADATA>
+<FIELDS>
+<FIELD attrname="TablaPadre" fieldtype="string.uni" WIDTH="200"/>
+<FIELD attrname="TablaHija" fieldtype="string.uni" WIDTH="200"/>
+<FIELD attrname="CamposPadre" fieldtype="string.uni" WIDTH="500"/>
+<FIELD attrname="CamposHija" fieldtype="string.uni" WIDTH="500"/>
+<FIELD attrname="TipoRelacion" fieldtype="string.uni" WIDTH="2"/>
+<FIELD attrname="TipoRelacionU" fieldtype="string.uni" WIDTH="2"/>
+<FIELD attrname="FiltroPadre" fieldtype="string.uni" WIDTH="500"/>
+<FIELD attrname="FiltroHija" fieldtype="string.uni" WIDTH="500"/>
+</FIELDS>
+<PARAMS/>
+</METADATA>
+<ROWDATA>
+<ROW TablaPadre="DOCUPAGO" TablaHija="__CLIENTES" CamposPadre="DOCPAG" CamposHija="DOCPAGAUTO" TipoRelacion="R" TipoRelacionU="C"/>
+<ROW TablaPadre="FORMAPAG" TablaHija="__CLIENTES" CamposPadre="FORPAG" CamposHija="FORPAGAUTO" TipoRelacion="R" TipoRelacionU="C"/>
+<ROW TablaPadre="ARTICULO" TablaHija="__MAPPINGARTICULOS" CamposPadre="CODART" CamposHija="CODARTMANT" TipoRelacion="R" TipoRelacionU="C"/>
+<ROW TablaPadre="ARTICULO" TablaHija="__MAPPINGARTICULOS" CamposPadre="CODART" CamposHija="CODART" TipoRelacion="R" TipoRelacionU="C"/>
+<ROW TablaPadre="__PROVEED" TablaHija="LINEALBA" CamposPadre="CODPRO" CamposHija="CODASESOR" TipoRelacion="R" TipoRelacionU="C"/>
+</ROWDATA>
+</DATAPACKET>

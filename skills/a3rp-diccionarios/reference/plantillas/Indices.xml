@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  <DATAPACKET Version="2.0">
+<METADATA>
+<FIELDS>
+<FIELD attrname="Tabla" fieldtype="string.uni" WIDTH="200"/>
+<FIELD attrname="Indice" fieldtype="string.uni" WIDTH="500"/>
+<FIELD attrname="Columnas" fieldtype="string.uni" WIDTH="400"/>
+<FIELD attrname="Clave" fieldtype="boolean"/>
+<FIELD attrname="Unico" fieldtype="boolean"/>
+<FIELD attrname="Agrupado" fieldtype="boolean"/>
+</FIELDS>
+<PARAMS/>
+</METADATA>
+<!--
+  Solo necesita filas para tablas NUEVAS propias (no nativas de a3ERP) que requieran un índice
+  propio. Las tablas nativas (como CENTROSC o PERSONA) ya traen su propio índice de a3ERP y no
+  necesitan fila aquí. Vacío en el caso PERSONACC (las dos tablas implicadas son nativas).
+-->
+<ROWDATA>
+</ROWDATA>
+</DATAPACKET>

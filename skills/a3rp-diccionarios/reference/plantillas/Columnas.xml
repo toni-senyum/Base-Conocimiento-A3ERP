@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  <DATAPACKET Version="2.0">
+<METADATA>
+<FIELDS>
+<FIELD attrname="Tabla" fieldtype="string.uni" WIDTH="200"/>
+<FIELD attrname="Columna" fieldtype="string.uni" WIDTH="200"/>
+<FIELD attrname="Tipo" fieldtype="string.uni" WIDTH="32"/>
+<FIELD attrname="Longitud" fieldtype="i4"/>
+<FIELD attrname="Escala" fieldtype="i4"/>
+<FIELD attrname="PermiteNulos" fieldtype="boolean"/>
+<FIELD attrname="DBDefault" fieldtype="string.uni" WIDTH="200"/>
+<FIELD attrname="Cuadrado" fieldtype="boolean"/>
+<FIELD attrname="Descripcion" fieldtype="string.uni" WIDTH="300"/>
+<FIELD attrname="ValoresPosibles" fieldtype="string.uni" WIDTH="200"/>
+<FIELD attrname="Defecto" fieldtype="string.uni" WIDTH="60"/>
+<FIELD attrname="Version" fieldtype="string.uni" WIDTH="10"/>
+<FIELD attrname="Revision" fieldtype="string.uni" WIDTH="10"/>
+<FIELD attrname="Parche" fieldtype="string.uni" WIDTH="10"/>
+<FIELD attrname="EsDescripcion" fieldtype="boolean"/>
+<FIELD attrname="Calculado" fieldtype="string.uni" WIDTH="2"/>
+<FIELD attrname="EnMantenimiento" fieldtype="string.uni" WIDTH="2"/>
+<FIELD attrname="Dependencia" fieldtype="string.uni" WIDTH="60"/>
+<FIELD attrname="Editor" fieldtype="i4"/>
+<FIELD attrname="OrdenCol" fieldtype="i4"/>
+<FIELD attrname="Identidad" fieldtype="boolean"/>
+<FIELD attrname="DescripcionCorta" fieldtype="string.uni" WIDTH="30"/>
+<FIELD attrname="Propiedad" fieldtype="string.uni" WIDTH="100"/>
+<FIELD attrname="Modificado" fieldtype="dateTime"/>
+<FIELD attrname="ModificadoLogico" fieldtype="dateTime"/>
+</FIELDS>
+<PARAMS/>
+</METADATA>
+<ROWDATA>
+<!--
+  EJEMPLO REAL VALIDADO (PERSONACC):
+  - Fila 1: la columna NUEVA (CENTROSC.SEN_CODPERSONA) - Editor="2" (Combo),
+    EnMantenimiento="T" (editable), PermiteNulos="TRUE".
+  - Fila 2: la fila de REFERENCIA de la clave del padre (PERSONA.CODPER) - obligatoria cuando
+    una tabla se añade solo como padre de una FK. EnMantenimiento="F", Editor="0" (sin editor),
+    EsDescripcion="FALSE", PermiteNulos="FALSE", Cuadrado="TRUE" (campo código, justificado a la
+    derecha). No hace falta registrar el campo descriptivo de la tabla padre (PERSONA.NOMPER no
+    está aquí).
+  Editor: 0=Sin editor, 1=Campo, 2=Combo, 3=Check, 4=Memo, 5=Imagen, 6=Depende del campo.
+-->
+<ROW Tabla="CENTROSC" Columna="SEN_CODPERSONA" Tipo="varchar" Longitud="8" Escala="0" PermiteNulos="TRUE" Cuadrado="FALSE" Descripcion="Persona responsable" ValoresPosibles="" Defecto="" Version="1" Revision="0" Parche="" EsDescripcion="FALSE" Calculado="F" EnMantenimiento="T" Dependencia="" Editor="2" OrdenCol="0" Identidad="FALSE" DescripcionCorta="Persona respons" Propiedad="SEN_CODPERSONA" Modificado="20260918T12:00:00000" ModificadoLogico="20260918T12:00:00000"/>
+<ROW Tabla="PERSONA" Columna="CODPER" Tipo="varchar" Longitud="8" Escala="0" PermiteNulos="FALSE" Cuadrado="TRUE" Descripcion="C&#243;d. persona" ValoresPosibles="" Defecto="" Version="1" Revision="0" Parche="" EsDescripcion="FALSE" Calculado="F" EnMantenimiento="F" Dependencia="" Editor="0" OrdenCol="0" Identidad="FALSE" DescripcionCorta="C&#243;d. persona" Propiedad="CODPER" Modificado="20260918T12:00:00000" ModificadoLogico="20260918T12:00:00000"/>
+</ROWDATA>
+</DATAPACKET>

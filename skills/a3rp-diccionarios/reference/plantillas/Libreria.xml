@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  <DATAPACKET Version="2.0">
+<METADATA>
+<FIELDS>
+<FIELD attrname="Nombre" fieldtype="string.uni" WIDTH="60"/>
+<FIELD attrname="Version" fieldtype="string.uni" WIDTH="10"/>
+<FIELD attrname="Revision" fieldtype="string.uni" WIDTH="10"/>
+<FIELD attrname="Parche" fieldtype="string.uni" WIDTH="10"/>
+<FIELD attrname="MinVersionAct" fieldtype="string.uni" WIDTH="10"/>
+<FIELD attrname="MinRevisionAct" fieldtype="string.uni" WIDTH="10"/>
+<FIELD attrname="MinParcheAct" fieldtype="string.uni" WIDTH="10"/>
+<FIELD attrname="MinIdentificadorAct" fieldtype="i4"/>
+<FIELD attrname="Autor" fieldtype="string.uni" WIDTH="160"/>
+<FIELD attrname="Direccion" fieldtype="string.uni" WIDTH="160"/>
+<FIELD attrname="Telefono" fieldtype="string.uni" WIDTH="80"/>
+<FIELD attrname="web" fieldtype="string.uni" WIDTH="160"/>
+<FIELD attrname="email" fieldtype="string.uni" WIDTH="160"/>
+<FIELD attrname="Identificador" fieldtype="i4"/>
+<FIELD attrname="VersionDiccionario" fieldtype="i4"/>
+<FIELD attrname="IdentObjetos" fieldtype="i4"/>
+<FIELD attrname="Comentarios" fieldtype="bin.hex" SUBTYPE="WideText"/>
+</FIELDS>
+<PARAMS/>
+</METADATA>
+<ROWDATA>
+<!--
+  EJEMPLO REAL VALIDADO (diccionario PERSONACC, Senyum/GestionCC, X_DEMO):
+  Identificador="902" fue elegido a mano, sin colisión conocida en ese servidor.
+  Para un diccionario nuevo: cambia Nombre/Comentarios/Identificador, y valida el
+  Identificador con el usuario antes de darlo por bueno (ver reference/diccionario-a3erp-formato.md).
+  Nota: MinVersionAct, MinRevisionAct, MinParcheAct, MinIdentificadorAct e IdentObjetos
+  están en <FIELDS> pero se OMITEN por completo en el <ROW> real (no van ni vacíos) - así es como
+  aparecen en las librerías reales inspeccionadas, replica esa omisión.
+-->
+<ROW Nombre="PERSONACC" Version="1" Revision="0" Parche="" Autor="Senyum Managment" Direccion="Travessera de Les Corts, 174 08028 Barcelona" Telefono="933 22 19 00" web="https://senyum.es/" email="info@senyum.es" Identificador="902" VersionDiccionario="140502" Comentarios="Asignaci&#243;n de persona responsable a Centro de Coste (INTEMAN)"/>
+</ROWDATA>
+</DATAPACKET>

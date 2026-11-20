@@ -1,0 +1,46 @@
+# Tabla: CUENTAS
+
+**Módulo A3ERP**: Contabilidad
+**Tipo de objeto**: TABLE (`BASE TABLE`, confirmado en `INFORMATION_SCHEMA.TABLES` contra `EHEALTH`)
+**Descripción**: Plan de cuentas contables. Una fila = una cuenta (a cualquier nivel de jerarquía:
+grupo, subgrupo, cuenta, subcuenta de detalle).
+
+## Columnas relevantes
+
+| Columna | Tipo | Nulo | Notas |
+|---|---|---|---|
+| IDCUENTA | `money` | No | Clave primaria real. Tipo `money` (mismo patrón que `IDFACV`/`IDLIN` en Facturación) — aterriza como `double` en Power BI. |
+| CUENTA | `varchar(12)` | No | Código de cuenta contable (p. ej. `600`, `600000000`). **No es único por sí solo** — ver gotcha `PLACON`. Los dos primeros dígitos son el grupo PGC. |
+| **PLACON** | `varchar(4)` | No | **`'PGC'` o `'NPGC'` — dos planes de cuentas en paralelo con los mismos códigos duplicados. Ver gotcha crítico.** |
+| DESCCUE | `varchar(100)` | Sí | Descripción de la cuenta. |
+| NIVEL | `tinyint` | Sí | Nivel de jerarquía: 1 (grupo) → 2 (subgrupo) → 3 (cuenta) → 5 (subcuenta de detalle). Sin nivel 4 en el cliente verificado. |
+| DETALLE | `varchar(1)` | Sí | `'T'` = cuenta de detalle (la única donde se postea de verdad), `'F'` = cuenta de agrupación. |
+| BLOQUEADO, OBSOLETO | `varchar(1)` | Sí | Flags T/F, no investigados en profundidad. |
+| CODMON | `varchar(8)` | Sí | FK a `MONEDAS`. |
+| BSA/BSAP/BSN/BSNP/BSS/BSSP/NBSA/NBSAP/NBSN/NBSNP/NBSP/NBSPP/PGA/PGAH/PGAN/PGN/PGNH/PGS/PGSH/NPGA/NPGN/NPGP | `varchar(10)` | Sí | Códigos de mapeo a las líneas oficiales de Balance de Situación (`BS*`) y Pérdidas y Ganancias (`PG*`). No descifrados columna a columna — la vista `Ape_Saldos_PYG_Version_NPGC` ya expone la clasificación de P&G resuelta, ver esa ficha. |
+| ACTPAS | `varchar(1)` | Sí | Probablemente Activo/Pasivo — no verificado con datos. |
+
+## Relaciones (declaradas o inferidas)
+
+| Columna | Tabla relacionada | Tipo de relación |
+|---|---|---|
+| IDCUENTA | __ASIENTOS.IDCUENTA | FK real (`FK___ASIENTOS_CUENTAS_IDCUENTA`), referenciada desde el lado "muchos" |
+| CODMON | MONEDAS | FK real (`FK_CUENTAS_MONEDAS_CODMON`) |
+
+## Notas / gotchas
+
+- **Dos planes de cuentas en paralelo (`PLACON`).** Verificado contra `EHEALTH` (E-Health Technical
+  Solutions): 1.462 filas `PLACON='PGC'` y 4.092 filas `PLACON='NPGC'`, con los mismos códigos de
+  cuenta duplicados en ambos planes (p. ej. `600` existe como fila distinta en cada uno). Verificado
+  cruzando con los apuntes reales (`__ASIENTOS.IDCUENTA`): el 100% de los apuntes de este cliente
+  usan `PLACON='NPGC'`, cero apuntes contra `'PGC'`. **Cualquier consulta debe filtrar
+  `WHERE PLACON = 'NPGC'`** (o el plan que resulte activo en el cliente concreto — no asumir que
+  será siempre `NPGC`, repetir esta verificación por cliente) para no duplicar filas al unir con
+  `__ASIENTOS`/`APUNTES`.
+- Solo las cuentas con `DETALLE='T'` reciben apuntes — en el cliente verificado, siempre coinciden
+  con `NIVEL=5`. Las de `DETALLE='F'` son cuentas de agrupación (no se postea directamente ahí).
+- Existe una vista, `APUNTES`, que ya trae `__ASIENTOS` unida con `CUENTAS` (añade `CUENTA`,
+  `DESCCUE`, `PLACON`) — preferible a hacer el `JOIN` a mano, pero sigue haciendo falta filtrar
+  `PLACON='NPGC'` explícitamente (la vista no lo hace por defecto).
+- Detalle completo del análisis para EBITDA (grupos PGC relevantes, magnitudes reales verificadas)
+  en el repo del proyecto: `Dashboards/EBITDA/docs/esquema-contable-ebitda.md`.
