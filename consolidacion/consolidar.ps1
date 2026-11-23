@@ -115,6 +115,12 @@ try {
     $inicioDto = [datetimeoffset](Get-Date)
     $inicio = Get-Iso $inicioDto
     Write-Log "Inicio de la consolidacion ($inicio)"
+    # Token de larga duracion: si el proceso no lo heredo (sesion abierta antes de crearlo), leerlo del entorno de usuario
+    if (-not $env:CLAUDE_CODE_OAUTH_TOKEN) {
+        $tok = [Environment]::GetEnvironmentVariable('CLAUDE_CODE_OAUTH_TOKEN', 'User')
+        if ($tok) { $env:CLAUDE_CODE_OAUTH_TOKEN = $tok }
+    }
+    Write-Log ('token: ' + $(if ($env:CLAUDE_CODE_OAUTH_TOKEN) { 'si' } else { 'no' }))
 
     # --- ultima_pasada --------------------------------------------------------------------------------
     if ($UltimaPasada) { $ultima = [datetimeoffset]::Parse($UltimaPasada) }
