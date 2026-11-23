@@ -18,7 +18,9 @@ Docs de repos de C:\SENYUM (CLAUDE.md, docs/, CHANGELOG) ───────�
 
 - **Captura**: al cerrar un chat con algo útil, se pide "captura para la base" (skill `alimentar-base-conocimiento-senyum`),
   que deja una nota en `_inbox/`.
-- **Consolidación**: `consolidar.ps1` ejecuta `claude -p` con `prompt-consolidador.md`. Trabaja en el worktree
+- **Consolidación**: `consolidar.ps1` prepara las fuentes (inventario de notas, sesiones de Claude Code extraídas a texto
+  y repos con cambios de documentación desde la última pasada). Si no hay nada, termina sin lanzar Claude. Si hay algo,
+  ejecuta `claude -p` con `prompt-consolidador.md` y, según el resultado, actualiza `estado.json`. Trabaja en el worktree
   `C:\SENYUM\base-conocimiento-consolidacion` (rama `consolidacion`), nunca en `main`, porque las skills se cargan
   desde `main` mediante enlaces y lo no revisado no debe entrar en producción.
 - Si hay propuestas sin revisar, las siguientes pasadas se acumulan en la misma rama (una propuesta por día).
@@ -30,7 +32,9 @@ Docs de repos de C:\SENYUM (CLAUDE.md, docs/, CHANGELOG) ───────�
 | `prompt-consolidador.md` | Instrucciones del consolidador (reglas, fuentes, mapa de destino, formato de propuesta) | sí |
 | `consolidar.ps1` | Script que lanza la pasada: worktree, `claude -p`, log, aviso | sí |
 | `propuestas/AAAA-MM-DD.md` | Propuesta de cada día (en la rama `consolidacion`) | sí |
-| `estado.json` | Fecha de la última pasada | no |
+| `extraer_sesiones.py` | Convierte las sesiones `.jsonl` de Claude Code en texto compacto para la pasada | sí |
+| `estado.json` | Hora de inicio de la última pasada completada (lo escribe el script, no Claude) | no |
+| `trabajo/` | Inventario y sesiones extraídas de la pasada en curso (se vacía en cada ejecución) | no |
 | `logs/` | Salida de cada ejecución | no |
 
 ## Revisar una propuesta
@@ -48,3 +52,4 @@ Abrir Claude Code en `C:\SENYUM\base-conocimiento` y pedir "revisa la consolidac
 - Ver el último fichero de `logs/`.
 - Deshacer una fusión: `git revert -m 1 <hash del merge>`.
 - Repetir un día: editar `ultima_pasada` en `estado.json` y lanzar `consolidar.ps1` a mano.
+- Resultado `INCOMPLETA`: `ultima_pasada` no avanza, así que la siguiente pasada vuelve a cubrir el mismo periodo.
