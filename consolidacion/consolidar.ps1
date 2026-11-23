@@ -247,6 +247,12 @@ try {
         }
         Add-Content -Path $Log -Value ($out -join "`r`n") -Encoding UTF8
         Write-Log "Claude termino con codigo $claudeCode"
+        # Error de autenticacion (login caducado / token invalido): mensaje especifico
+        if ($claudeCode -ne 0 -or -not ($out | Where-Object { $_ -match '^\s*(PROPUESTA:|SIN NOVEDADES|INCOMPLETA:)' })) {
+            if (($out -join "`n") -match '(?i)(\b401\b|authentication[_ ]error|not logged in|please run /login|invalid (api key|bearer|token)|oauth token.{0,40}(expired|invalid|revoked)|token.{0,20}expired|invalid_grant)') {
+                throw 'Claude Code: hay que renovar el login (ejecutar claude setup-token y actualizar CLAUDE_CODE_OAUTH_TOKEN).'
+            }
+        }
         if ($claudeCode -ne 0) { throw "Claude Code fallo (codigo $claudeCode). Ver el log." }
 
         # Salvaguarda: main no debe haber cambiado
