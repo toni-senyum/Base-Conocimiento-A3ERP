@@ -12,7 +12,8 @@ sobre a3ERP y proponerlo como cambios en una rama, para que Toni lo revise y apr
 1. **Nunca edites `main` ni la carpeta `C:\SENYUM\base-conocimiento`.** Las skills se cargan desde ahí por enlaces:
    lo que toques ahí entra en producción sin revisión. Trabaja SOLO en el worktree de la rama `consolidacion`:
    `C:\SENYUM\base-conocimiento-consolidacion` (el script lo crea si no existe).
-2. **Las fuentes son de solo lectura.** No modifiques nada fuera del worktree (ni repos, ni transcripciones, ni `_inbox/` de main).
+2. **Las fuentes son de solo lectura.** No modifiques nada fuera del worktree (ni repos, ni transcripciones, ni `_inbox/` de main,
+   ni `consolidacion/estado.json`, que lo gestiona el script).
 3. **Solo conocimiento verificado.** Clasifica cada hallazgo: `verificado` (probado en a3ERP, consultado por SQL,
    traza, código en producción), `documentado` (manual oficial) o `hipótesis`. Las hipótesis NO se aplican:
    van solo a la propuesta, en "Dudosos".
@@ -23,36 +24,37 @@ sobre a3ERP y proponerlo como cambios en una rama, para que Toni lo revise y apr
 7. **Nada de un solo cliente sin valor general.** Una configuración concreta de un cliente no entra; la regla de a3ERP que se aprendió con ella, sí.
 8. Sin `.bak`. El historial es git.
 
-## Paso 0. Estado
+## Paso 0. Datos de esta pasada
 
-- Lee `C:\SENYUM\base-conocimiento\consolidacion\estado.json` (`ultima_pasada`, ISO 8601). Si no existe, usa las últimas 72 horas.
+- El script antepone a este prompt un bloque **"Datos de esta pasada"** con la hora de inicio, `ultima_pasada` y la ruta del
+  inventario (`C:\SENYUM\base-conocimiento\consolidacion\trabajo\inventario.json`). Usa esos valores tal cual:
+  **no calcules fechas ni horas por tu cuenta** y usa la fecha de inicio para nombrar la propuesta.
+- El script solo te lanza si el inventario tiene algo. Si aun así no encuentras nada aprovechable, termina con `SIN NOVEDADES`.
 - Trabaja en el worktree `C:\SENYUM\base-conocimiento-consolidacion` (rama `consolidacion`). Si la rama ya tiene commits
   sin fusionar de días anteriores, **continúa sobre ellos** (Toni aún no ha revisado): no dupliques lo ya propuesto.
 
-## Paso 1. Fuentes (solo lo posterior a `ultima_pasada`)
+## Paso 1. Fuentes (las que lista el inventario)
 
-**a) Notas de captura**: `C:\SENYUM\base-conocimiento\_inbox\*.md` (no `procesadas/`, no `README.md`).
-Ya vienen filtradas desde los chats; son la fuente más fiable.
+El script ya ha seleccionado y preparado las fuentes posteriores a `ultima_pasada`. Lee `inventario.json` y trabaja solo con lo que lista.
 
-**b) Sesiones de Claude Code**: `%USERPROFILE%\.claude\projects\*\*.jsonl` con fecha de modificación posterior.
-- Excluye las carpetas de proyecto cuyo nombre corresponda a `C:\SENYUM\base-conocimiento` o a
-  `C:\SENYUM\base-conocimiento-consolidacion` (incluidas las ejecuciones de este mismo consolidador).
-- Son ficheros grandes: no los leas enteros. Extrae con un script solo el texto de los mensajes de usuario y asistente
-  (y, de los resultados de herramientas, solo lo que confirme algo: errores reales, resultados de SQL, salidas de compilación),
-  truncando cada resultado largo.
+**a) Notas de captura**: las rutas de `_inbox/` del inventario. Ya vienen filtradas desde los chats; son la fuente más fiable.
+
+**b) Sesiones de Claude Code**: el script las ha extraído a texto en `consolidacion\trabajo\sesiones\*.txt`
+(mensajes de usuario y asistente; resultados de herramientas truncados). Lee esos `.txt`, no los `.jsonl`.
+Solo si un hallazgo necesita un detalle que el texto truncó, consulta el `.jsonl` original que indica el inventario,
+buscando con `grep` (nunca leyéndolo entero).
 - Busca sobre todo: errores resueltos y su causa, comportamientos de a3ERP comprobados, consultas SQL que funcionaron,
   correcciones que hizo Toni a algo que Claude daba por cierto.
 
-**c) Documentación de repos**: repos git de `C:\SENYUM\*` (excepto `base-conocimiento*`).
-- `git log --since=<ultima_pasada> --name-only` limitado a `CLAUDE.md`, `README.md`, `CHANGELOG*`, `docs/`, `doc/`, `tasks/`.
-- Lee los diffs de esos ficheros, no el código.
-
-Si las tres fuentes están vacías: actualiza `estado.json` (ver paso 5), escribe "Sin novedades" y termina. No crees commits.
+**c) Documentación de repos**: el inventario lista los repos con cambios en `CLAUDE.md`, `README.md`, `CHANGELOG*`,
+`docs/`, `doc/` o `tasks/` desde `ultima_pasada`, con los ficheros cambiados. Lee sus diffs
+(`git -C <repo> log -p --since=<ultima_pasada> -- <ficheros>`), no el código.
 
 ## Paso 2. Leer la base antes de proponer
 
 En el worktree, lee `README.md` y los ficheros de destino que vayas a tocar, enteros, para no duplicar ni contradecir sin saberlo.
-Lee también `consolidacion/propuestas/` de días sin fusionar.
+Lee también `consolidacion/propuestas/` de días sin fusionar y `consolidacion/propuestas/rechazados.md`
+(si existe): lo que Toni ya rechazó no se vuelve a proponer salvo que haya evidencia nueva.
 
 Mapa de destino:
 
@@ -100,6 +102,9 @@ Las correcciones (`CORRIGE`) van primero. Después, un commit en la rama `consol
 
 ## Paso 5. Cierre
 
-- Escribe en `C:\SENYUM\base-conocimiento\consolidacion\estado.json`: `{"ultima_pasada": "<ahora ISO>", "ultima_propuesta": "<fichero o null>"}`.
-  Es el único fichero fuera del worktree que puedes escribir (está en `.gitignore`).
-- Termina con una línea: `PROPUESTA: consolidacion/propuestas/AAAA-MM-DD.md (N cambios, N dudosos)` o `SIN NOVEDADES`.
+- No escribas `estado.json`: el script lo actualiza según tu resultado.
+- La **última línea** de tu respuesta, sin nada después, debe ser exactamente una de estas:
+  - `PROPUESTA: consolidacion/propuestas/AAAA-MM-DD.md (N cambios, N dudosos)`
+  - `SIN NOVEDADES`
+  - `INCOMPLETA: <motivo>` si no has podido leer alguna fuente o aplicar los cambios (permisos, errores…).
+    No la disfraces de `SIN NOVEDADES`: con `INCOMPLETA` el script no avanza `ultima_pasada` y avisa a Toni.
