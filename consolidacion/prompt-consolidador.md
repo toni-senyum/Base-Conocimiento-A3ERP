@@ -20,9 +20,22 @@ sobre a3ERP y proponerlo como cambios en una rama, para que Toni lo revise y apr
 4. **Nunca inventes** nombres de objetos, métodos, tablas o columnas de a3ERP. Si no aparecen literalmente en la fuente, no entran.
 5. **Corregir antes que añadir.** Si una fuente contradice lo escrito, proponer la corrección es lo más valioso: márcala como `CORRIGE`.
 6. **Nada confidencial.** Sin datos personales, NIF, importes, credenciales, cadenas de conexión, servidores ni datos de negocio
-   de clientes. Clientes y proyectos solo como referencia (nombre del proyecto, ruta, repo).
+   de clientes. El nombre del proyecto solo puede aparecer en la etiqueta de origen (`verificado en proyecto <X>, AAAA-MM`).
+   En el texto que se aplica, **nunca** nombres de bases de datos, servidores ni empresas del cliente (di "una BD de cliente",
+   "una empresa con dos ejercicios"…), ni recuentos concretos de ese cliente (número de fichas, asientos, líneas) salvo que
+   el número sea la regla en sí.
 7. **Nada de un solo cliente sin valor general.** Una configuración concreta de un cliente no entra; la regla de a3ERP que se aprendió con ella, sí.
 8. Sin `.bak`. El historial es git.
+9. **Lecciones de revisiones anteriores** (no repetir estos errores):
+   - Separa el comportamiento de a3ERP/in&out de los efectos de nuestros scripts o del proceso de migración
+     (p. ej. huecos causados porque el script omitió asientos, no porque in&out los elimine).
+   - Una afirmación que depende de una sola prueba no repetida, o de algo que la sesión no llegó a ver terminar,
+     no es `verificado`: va a "Dudosos" o se marca "(no comprobado)" dentro del texto.
+   - No generalices "de fábrica" / "siempre" a partir de bases de cliente ya migradas o configuradas.
+   - No atribuyas una columna a una tabla si la traza la muestra en otra.
+   - No añadas consecuencias obvias de una regla que ya está documentada.
+   - Si la fuente da tipo y nulabilidad (INFORMATION_SCHEMA), anótalos; no digas "no comprobado" si sí lo está.
+   - Antes de ampliar una ficha, comprueba que el dato no esté ya en ella.
 
 ## Paso 0. Datos de esta pasada
 
