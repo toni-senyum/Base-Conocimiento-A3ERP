@@ -1,7 +1,7 @@
 # Tabla: LINEFACT (modelo Power BI: LineasFactura)
 
 **Módulo A3ERP**: Facturación
-**Tipo de objeto**: TABLE (`BASE TABLE`, confirmado en `INFORMATION_SCHEMA.TABLES` contra `X_DEMO`)
+**Tipo de objeto**: TABLE (`BASE TABLE`, confirmado en `INFORMATION_SCHEMA.TABLES` contra una BD de pruebas)
 **Descripción**: Líneas de factura (de venta **y** de compra, según el ERP — ver gotchas). Una fila = una línea de una factura.
 
 ## Columnas relevantes
@@ -19,7 +19,7 @@
 | TIPIVA | `varchar(8)` | No | |
 | CODALM | `varchar(8)` | Sí | Almacén. |
 
-### Columnas de líneas de compra (verificadas en X_DEMO, 2026-10, proyecto GestionImnovilizado)
+### Columnas de líneas de compra (verificadas en una BD de pruebas, 2026-10, proyecto GestionImnovilizado)
 
 | Columna | Notas |
 |---|---|
@@ -37,12 +37,12 @@
 |---|---|---|
 | IDFACV | Facturas (CABEFACV.IDFACV) | FK real (`FK_LINEFACT_CABEFACV_IDFACV`) |
 | CODART | Articulos (ARTICULO.CODART) | FK real (`FK_LINEFACT_ARTICULO_CODART`) |
-| IDFACC | Facturas de compra (CABEFACC.IDFACC) | Verificada con datos (X_DEMO) |
-| IDLIN | Inmovilizado (AMORTIZA.IDLIN) | Inferida y verificada con datos (X_DEMO) |
+| IDFACC | Facturas de compra (CABEFACC.IDFACC) | Verificada con datos (una BD de pruebas) |
+| IDLIN | Inmovilizado (AMORTIZA.IDLIN) | Inferida y verificada con datos (una BD de pruebas) |
 
 ## Notas / gotchas
 
-- **`LINEFACT` mezcla líneas de venta y de compra** — confirmado en X_DEMO (2026-10): las de compra
+- **`LINEFACT` mezcla líneas de venta y de compra** — confirmado en una BD de pruebas (2026-10): las de compra
   llevan `IDFACC`. Según el brief del proyecto — el modelo de A3ERP-PowerBI filtra explícitamente a líneas de venta (excluyendo las que referencian `IDFACC` en vez de `IDFACV`) para no mezclar sentidos. Verificar siempre este filtro antes de reutilizar la tabla.
-- **`CODART` es `VARCHAR(15)`, NO `CHAR`** (corregido tras verificar contra `X_DEMO` — ver detalle completo en `Articulos.md`, mismo campo/misma causa). El efecto práctico (necesita `LTRIM`/`RTRIM`) sigue siendo el mismo, pero la causa real es que A3ERP graba los códigos puramente numéricos justificados a la derecha con espacios hasta ocupar los 15 caracteres — no que la columna sea de longitud fija.
-- La medida `Ventas por Familia (Base Imponible)` excluye los artículos de código `52`/`53` ("Portes" en `X_DEMO`) — ver `Articulos.md` para la decisión sobre por qué no se usa `AFESTOCK` en su lugar.
+- **`CODART` es `VARCHAR(15)`, NO `CHAR`** (corregido tras verificar contra una BD de pruebas — ver detalle completo en `Articulos.md`, mismo campo/misma causa). El efecto práctico (necesita `LTRIM`/`RTRIM`) sigue siendo el mismo, pero la causa real es que A3ERP graba los códigos puramente numéricos justificados a la derecha con espacios hasta ocupar los 15 caracteres — no que la columna sea de longitud fija.
+- La medida `Ventas por Familia (Base Imponible)` excluye los artículos de código `52`/`53` ("Portes" en una BD de pruebas) — ver `Articulos.md` para la decisión sobre por qué no se usa `AFESTOCK` en su lugar.

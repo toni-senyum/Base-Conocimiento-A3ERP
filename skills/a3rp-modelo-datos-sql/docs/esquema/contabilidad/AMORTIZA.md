@@ -1,7 +1,7 @@
 # Tabla: AMORTIZA (inmovilizado)
 
 **Módulo A3ERP**: Contabilidad / Inmovilizado (ficha "Elemento de inmovilizado"; en "Mantenimiento de programas externos" la tabla aparece como *Amortizaciones*)
-**Tipo de objeto**: TABLE (`BASE TABLE`, confirmado contra `X_DEMO`, 2026-10)
+**Tipo de objeto**: TABLE (`BASE TABLE`, confirmado contra una BD de pruebas, 2026-10)
 **Descripción**: Elementos de inmovilizado (activos fijos). Una fila = un elemento, con sus datos de adquisición, amortización acumulada y, si procede, su baja.
 
 Explorada en el proyecto GestionImnovilizado (DLL de alta desde factura de compra y baja con asiento).
@@ -10,12 +10,12 @@ Explorada en el proyecto GestionImnovilizado (DLL de alta desde factura de compr
 
 | Columna | Tipo | Nulo | Notas |
 |---|---|---|---|
-| CODAMO | `varchar(8)` | No | **Clave primaria** (`PK_AMORTIZA`, clustered). Los códigos numéricos se guardan **justificados a la derecha con espacios** hasta 8 caracteres (`'      26'`). Conviven con códigos alfanuméricos (en X_DEMO, `P100`–`P107`). Comparar con `LTRIM(CODAMO)` o rellenar el parámetro con `PadLeft(8)`. |
+| CODAMO | `varchar(8)` | No | **Clave primaria** (`PK_AMORTIZA`, clustered). Los códigos numéricos se guardan **justificados a la derecha con espacios** hasta 8 caracteres (`'      26'`). Conviven con códigos alfanuméricos (en una BD de pruebas, `P100`–`P107`). Comparar con `LTRIM(CODAMO)` o rellenar el parámetro con `PadLeft(8)`. |
 | IDAMO | `money` | No | Identificador interno, índice único. **No** es `IDENTITY`: lo asigna a3ERP desde la tabla de contadores `IDENTIFICADORES`. |
 | NOMAMO | `varchar` | Sí | Descripción del elemento. |
 | CANTIDAD | numérico | Sí | Unidades. |
 | CTAINMOVILIZADO | `varchar` | Sí | Cuenta del activo (debería ser grupo 20/21/22). La **baja la abona**. Tiene CHECK de integridad contra cuentas. |
-| CTAAMORT | `varchar` | Sí | Cuenta de amortización acumulada (28x). Si no se informa, el objeto `Maestro` pone un valor por defecto (X_DEMO: `28190000`). CHECK contra cuentas. |
+| CTAAMORT | `varchar` | Sí | Cuenta de amortización acumulada (28x). Si no se informa, el objeto `Maestro` pone un valor por defecto (una BD de pruebas: `28190000`). CHECK contra cuentas. |
 | CTAGASTOS | `varchar` | Sí | Cuenta de gasto de amortización (68x). CHECK contra cuentas. No usada por la DLL. |
 | CENTROCOSTE, CENTROCOSTE2, CENTROCOSTE3 | `varchar(8)` | Sí | Analítica del elemento. CHECK contra `CENTROSC`. |
 | UBICACION | `varchar` | Sí | |

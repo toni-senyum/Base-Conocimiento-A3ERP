@@ -171,7 +171,7 @@ using var reader = await cmd.ExecuteReaderAsync();
 
 # B. Crear/extender un diccionario a3ERP (Diccionario.exe y XML directo)
 
-Validado end-to-end en entorno de pruebas local (X_DEMO, sept. 2026): añadir un campo
+Validado end-to-end en entorno de pruebas local (sept. 2026): añadir un campo
 `SEN_CODPERSONA` a `CENTROSC` con FK a `PERSONA`, **generando los 15 ficheros XML del
 diccionario directamente, sin abrir Diccionario.exe ni una sola vez**, y confirmando después en la
 GUI y por SQL que quedó correcto. Ver `reference/diccionario-a3erp-formato.md` en esta misma skill
@@ -353,7 +353,7 @@ está en el fichero equivocado**, no de que el valor esté mal escrito.
   `TipoRelacion="R" TipoRelacionU="R"`) y por la guía (sección 6.3, pág. 13).
 - **Cascada**: el diseño original de nuestro caso pedía borrado Restrictiva / actualización
   Cascada, pero **no hay ningún ejemplo real ni confirmación empírica del código exacto para
-  Cascada** — la versión final desplegada y validada en X_DEMO usa `TipoRelacionU="R"`
+  Cascada** — la versión final desplegada y validada en una BD de pruebas usa `TipoRelacionU="R"`
   (Restrictiva también en actualización), no Cascada. Si un caso futuro necesita Cascada de
   verdad: créala primero en la GUI con el desplegable "Tipo relación actualización", guarda, y lee
   el `TipoRelacionU` resultante en `Integridad.xml` — esa es la forma fiable de confirmar el
@@ -408,7 +408,7 @@ Un diccionario generado/editado y "activado" contra el árbol equivocado puede *
 completamente correcto** (Diccionario.exe lo abre sin error, la GUI muestra la columna, incluso se
 puede confirmar visualmente) sin que la columna llegue a existir nunca en la base de datos real que
 usa la empresa activa — exactamente lo que pasó con `PERSONACC`/`SEN_CODPERSONA`: dado por
-"completado y validado en X_DEMO" en la documentación, pero la comprobación SQL directa (semanas
+"completado y validado en una BD de pruebas" en la documentación, pero la comprobación SQL directa (semanas
 después) mostró que la columna no existía físicamente. Causa: el diccionario se había desplegado y
 activado en un entorno de pruebas distinto al que se estaba usando para verificar por SQL.
 
@@ -436,7 +436,7 @@ El diccionario `PERSONACC` (Senyum/GestionCC, campo `SEN_CODPERSONA` en `CENTROS
 `PERSONA`) es el caso real que validó todo este flujo, íntegramente generado por XML a mano y
 confirmado correcto en GUI y por SQL en un entorno de pruebas. **Importante (ver B.8): esa
 confirmación por SQL se hizo en un entorno de pruebas que después resultó no ser el mismo que
-X_DEMO** — repetir siempre la comprobación SQL en el entorno exacto que se vaya a usar, no asumir
+el entorno de referencia** — repetir siempre la comprobación SQL en el entorno exacto que se vaya a usar, no asumir
 que sigue siendo válida de una sesión a otra. Dos fuentes:
 
 - `reference/diccionario-a3erp-formato.md` en esta skill: el relato técnico completo (formato

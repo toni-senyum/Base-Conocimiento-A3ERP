@@ -1,7 +1,7 @@
 # Tabla: DLLS
 
 **Módulo A3ERP**: Sistema de extensiones (en la base de datos **de cada empresa**, no en `A3ERP$SISTEMA`)
-**Tipo de objeto**: TABLE (confirmado contra `X_DEMO`, 2026-10)
+**Tipo de objeto**: TABLE (confirmado contra una BD de pruebas, 2026-10)
 **Descripción**: DLLs COM que a3ERP debe cargar para esa empresa (eventos y programas externos). Una fila = una clase COM.
 
 ## Columnas relevantes
@@ -12,7 +12,7 @@
 | DLL | `varchar` | No | ProgID de la clase COM (`Namespace.Clase`, p. ej. `GestionImnovilizado.ActiveX`). |
 | FABRICANTE | `varchar` | Sí | Libre; recomendable que coincida con la carpeta `Extensiones\<Fabricante>\`. |
 | PRODUCTO | `varchar` | Sí | Ídem con `Extensiones\<Fabricante>\<Producto>\`. |
-| ORDENDEEJECUCION | numérico | Sí | **Nombre exacto `ORDENDEEJECUCION`** (no `ORDENEJECUCION`: un script con ese nombre falla). En X_DEMO, la DLL de GestionImnovilizado tiene `IDDLL=13`, orden `35004`. |
+| ORDENDEEJECUCION | numérico | Sí | **Nombre exacto `ORDENDEEJECUCION`** (no `ORDENEJECUCION`: un script con ese nombre falla). En una BD de pruebas, la DLL de GestionImnovilizado tiene `IDDLL=13`, orden `35004`. |
 
 ## Script idempotente
 

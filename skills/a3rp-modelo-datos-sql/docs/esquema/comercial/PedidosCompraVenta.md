@@ -1,7 +1,7 @@
 # Tablas: CABEPEDC, CABEPEDV (cabeceras de Pedido de Compra / Pedido de Venta)
 
 **Módulo A3ERP**: Compras (`CABEPEDC`) / Ventas (`CABEPEDV`)
-**Tipo de objeto**: TABLE (ambas), confirmado contra `X_DEMO`
+**Tipo de objeto**: TABLE (ambas), confirmado contra una BD de pruebas
 **Descripción**: Cabecera de pedido de compra (`CABEPEDC`, documento `PC` en eventos/API) y de
 pedido de venta (`CABEPEDV`, documento `PV`). Mismo patrón de nomenclatura que otras cabeceras de
 documento de a3ERP (`CABEOFEC/V`, `CABEALBC/V`, `CABEFACC/V`, `CABEDEPC/V`...).
@@ -35,7 +35,7 @@ documento de a3ERP (`CABEOFEC/V`, `CABEALBC/V`, `CABEFACC/V`, `CABEDEPC/V`...).
   reutilizar un campo nativo con un propósito distinto al suyo original, confirmar en la GUI si ya
   se usa visiblemente para algo (no hay tabla de captions/etiquetas accesible por SQL para
   confirmarlo por ese camino).
-- Verificado en `X_DEMO`: `CODPER` **siempre vacío** en ambas tablas (0/11 filas en `CABEPEDC`,
+- Verificado en una BD de pruebas: `CODPER` **siempre vacío** en ambas tablas (0/11 filas en `CABEPEDC`,
   0/28 en `CABEPEDV`) en el momento de la comprobación — no concluyente sobre si se usa en otros
   clientes/entornos.
 - `CENTROCOSTE` en cabecera de pedido es el mismo concepto/tabla que `CENTROSC` documentada en
@@ -48,12 +48,12 @@ documento de a3ERP (`CABEOFEC/V`, `CABEALBC/V`, `CABEFACC/V`, `CABEDEPC/V`...).
   (`SEN_CODPERSONA`, vía diccionario) fue una decisión de negocio explícita del cliente, no una
   cuestión de esquema — documentarla aquí solo como antecedente, el diseño vivo del proyecto está
   en el repo del proyecto (`Inteman\Desarrollos\CentroCosteYPersona\Diseño\`).
-- **`CABEALBC` (albarán de compra) confirmado idéntico en estos dos campos** (X_DEMO, 2026-09-23):
+- **`CABEALBC` (albarán de compra) confirmado idéntico en estos dos campos** (una BD de pruebas, 2026-09-23):
   `CENTROCOSTE varchar(8)` y `CODPER varchar(8)`, ambos nulables, misma collation
   (`Modern_Spanish_CI_AS`), con `FK_CABEALBC_CENTROSC_CENTROCOSTE` y `FK_CABEALBC_PERSONA_CODPER`.
-  Ojo: en X_DEMO las FK de `CENTROCOSTE` (pedido y albarán) están **deshabilitadas**
+  Ojo: en una BD de pruebas las FK de `CENTROCOSTE` (pedido y albarán) están **deshabilitadas**
   (`is_disabled=1`) y las de `CODPER` activas pero `is_not_trusted=1` — no fiarse de ellas como
   garantía de integridad. Vínculo línea pedido → línea albarán: `LINEALBA.IDPEDC` +
   `LINEALBA.NUMLINPED`; pendiente de servir en `LINEPEDI` = `UNIDADES - UNISERVIDA - UNIANULADA`.
-  Los albaranes generados desde pedido en X_DEMO heredan `CENTROCOSTE` de cabecera (p. ej. IDALBC
+  Los albaranes generados desde pedido en una BD de pruebas heredan `CENTROCOSTE` de cabecera (p. ej. IDALBC
   215 ← IDPEDC 187, `BCN`); si heredan también `CODPER` está pendiente de prueba (INTEMAN).

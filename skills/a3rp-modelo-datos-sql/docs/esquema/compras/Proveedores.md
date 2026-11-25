@@ -1,10 +1,10 @@
 # Tabla: __PROVEED (proveedores y acreedores)
 
 **Módulo A3ERP**: Compras
-**Tipo de objeto**: tabla base (se ha consultado así en OUTDOOR). **No verificado** en `INFORMATION_SCHEMA.TABLES`, ni qué vista la expone.
+**Tipo de objeto**: tabla base (se ha consultado así en una BD de cliente). **No verificado** en `INFORMATION_SCHEMA.TABLES`, ni qué vista la expone.
 **Descripción**: Ficha de proveedor (cuentas 400) o acreedor (cuentas 410).
 
-Verificado por SQL en OUTDOOR (proyecto RocRoi, 2026-10). Tipos y nulabilidad **no verificados** en `INFORMATION_SCHEMA.COLUMNS`.
+Verificado por SQL en una BD de cliente (proyecto RocRoi, 2026-10). Tipos y nulabilidad **no verificados** en `INFORMATION_SCHEMA.COLUMNS`.
 
 ## Columnas relevantes
 
@@ -28,6 +28,6 @@ Verificado por SQL en OUTDOOR (proyecto RocRoi, 2026-10). Tipos y nulabilidad **
 
 ## Notas / gotchas
 
-- Cuentas propias por ficha (OUTDOOR): proveedores 400 → 3 (400, 401, 407) en NPGC y en PGC; acreedores 410 → solo la 410, en los dos planes.
+- Cuentas propias por ficha (una BD de cliente): proveedores 400 → 3 (400, 401, 407) en NPGC y en PGC; acreedores 410 → solo la 410, en los dos planes.
 - 🔴 **Borrar la ficha borra sus cuentas propias sin apuntes** y conserva las compartidas y las que tienen apuntes: ver `contabilidad/CUENTAS.md`.
 - `__ORGANIZACION` no tiene campos de cuenta.

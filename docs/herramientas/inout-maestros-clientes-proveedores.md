@@ -1,12 +1,11 @@
 # in&out: carga y corrección de clientes, proveedores y direcciones
 
-Lo aprendido cargando y corrigiendo los maestros de clientes y proveedores de OUTDOOR GLOBAL CORP
+Lo aprendido cargando y corrigiendo los maestros de clientes y proveedores de un cliente
 (proyecto RocRoi, 2026-10): la fusión con Business Central (unas 2.500 fichas) y cinco rondas de
-corrección. Salvo que se diga lo contrario, todo está **verificado** con pruebas en `X_DEMO` y con las
+corrección. Salvo que se diga lo contrario, todo está **verificado** con pruebas en una BD de pruebas y con las
 cargas en la BD de la empresa, comprobadas después por SQL campo a campo.
 
-Repo del proyecto (documentación completa):
-`...\Clientes\RocRoi\Migracion\Tratameinto\00_ROCROI PALLARS SOBIRA SL\00_Documentacion_Migracion\06_Fusion_Clientes_Proveedores_BC\`
+Repo del proyecto (documentación completa): ver «Proyectos de referencia» del `README.md`, proyecto RocRoi.
 
 ## Formato del fichero
 
@@ -39,7 +38,7 @@ Repo del proyecto (documentación completa):
 - **a3ERP rellena la población a partir del CP**: enviarla siempre explícita, también cuando no cambia.
 - Si cambia la dirección, enviar también la **dirección fiscal** completa (`DIRFISCAL`, `DTOFISCAL`,
   `POBFISCAL`, `PROVIFISCAL`, `PAISFISCAL`). Si el país no es `ES`, `PROVIFISCAL` vacío.
-- En el alta, `PROVIFISCAL` / `PAISFISCAL` toman el valor por defecto de la empresa (en OUTDOOR,
+- En el alta, `PROVIFISCAL` / `PAISFISCAL` toman el valor por defecto de la empresa (en una BD de cliente,
   `08` / `ES`) aunque el cliente sea extranjero: enviarlos en el fichero.
 - `PROVIFISCAL` se guarda con **relleno** de ancho fijo (`'  22'`, no `'22'`; igual que `CODPROVI`
   `'  25'`): comparar con `LTRIM`/`RTRIM` (verificado en proyecto RocRoi, 2026-11).
@@ -56,7 +55,7 @@ Repo del proyecto (documentación completa):
 
 ## Regímenes de IVA en la ficha
 
-Probados en `X_DEMO` con facturas (libro de IVA y clave del 349), salvo donde se indica:
+Probados en una BD de pruebas con facturas (libro de IVA y clave del 349), salvo donde se indica:
 
 | Operación | Régimen + tipo | Resultado |
 |---|---|---|
@@ -66,7 +65,7 @@ Probados en `X_DEMO` con facturas (libro de IVA y clave del 349), salvo donde se
 | Adquisición intracomunitaria de bienes / de servicios | `CCEE` / `AISLT` | — (no probado con factura) |
 | Importación / servicio de fuera de la UE | `IMP` + `NOSUJETO` / `SUJPAS` | — (no probado con factura) |
 | Canarias, Ceuta y Melilla | `OPECCM` + `NOSUJETO` | Probado con ventas a Canarias |
-| Compra con IVA extranjero no deducible | `CNOSUJ` + `NOSUJETO` | **No verificado**: la prueba en X_DEMO quedó a medias |
+| Compra con IVA extranjero no deducible | `CNOSUJ` + `NOSUJETO` | **No verificado**: la prueba en una BD de pruebas quedó a medias |
 
 Los códigos de régimen son los de la empresa: comprobarlos en cada instalación antes de usarlos.
 

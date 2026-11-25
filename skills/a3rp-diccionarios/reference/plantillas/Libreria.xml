@@ -24,7 +24,7 @@
 </METADATA>
 <ROWDATA>
 <!--
-  EJEMPLO REAL VALIDADO (diccionario PERSONACC, Senyum/GestionCC, X_DEMO):
+  EJEMPLO REAL VALIDADO (diccionario PERSONACC, Senyum/GestionCC, una BD de pruebas):
   Identificador="902" fue elegido a mano, sin colisión conocida en ese servidor.
   Para un diccionario nuevo: cambia Nombre/Comentarios/Identificador, y valida el
   Identificador con el usuario antes de darlo por bueno (ver reference/diccionario-a3erp-formato.md).
