@@ -111,6 +111,10 @@ Fuentes: N notas de inbox · N sesiones de Claude Code · N repos con cambios de
 - <hallazgo> — motivo (un solo cliente, confidencial, ya estaba…)
 ```
 
+En la columna **Fuente** indica siempre de dónde sale cada cambio de forma localizable: nota de `_inbox/` (nombre del fichero),
+sesión de Claude Code (id de sesión de 8 caracteres, el nombre del `.txt` extraído) o repo + commit. Así la revisión puede
+comprobarlo sin buscar en los `.jsonl` crudos.
+
 Las correcciones (`CORRIGE`) van primero. Después, un commit en la rama `consolidacion`: `Consolidación AAAA-MM-DD`.
 
 ## Paso 5. Cierre
