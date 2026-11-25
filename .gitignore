@@ -8,3 +8,4 @@ scripts/config.ini
 consolidacion/estado.json
 consolidacion/logs/
 consolidacion/trabajo/
+consolidacion/trabajo-historico/

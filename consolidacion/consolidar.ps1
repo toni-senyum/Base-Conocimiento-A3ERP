@@ -34,6 +34,8 @@ $Extractor= Join-Path $Main 'consolidacion\extraer_sesiones.py'
 $Inventario = Join-Path $Trabajo 'inventario.json'
 $LockFile = Join-Path $LogDir '.lock'
 $KeepLogs = 30
+$Historico = Join-Path $Main 'consolidacion\trabajo-historico'
+$KeepHistoricoDias = 30
 
 # Raíces donde buscar repos git (recursivo, hasta $ProfundidadRepos niveles)
 $RaicesRepos = @(
@@ -277,6 +279,14 @@ try {
     if ($last.StartsWith('PROPUESTA:')) {
         if ($last -match '^PROPUESTA:\s*(\S+)') { $propuesta = $Matches[1] }
         Send-Notice 'Base de conocimiento: propuesta pendiente' ($last -replace '^PROPUESTA:\s*', '')
+        # Conservar las fuentes extraidas de esta pasada para que la revision pueda comprobarlas (se purgan a los 30 dias)
+        try {
+            $dest = Join-Path $Historico ((Get-Item -LiteralPath $Log).BaseName)   # yyyy-MM-dd_HHmm
+            New-Item -ItemType Directory -Force -Path $dest | Out-Null
+            Copy-Item -LiteralPath (Join-Path $Trabajo 'sesiones') -Destination $dest -Recurse -Force
+            Copy-Item -LiteralPath $Inventario -Destination $dest -Force
+            Write-Log "Fuentes conservadas en $dest"
+        } catch { Write-Log "AVISO: no se pudo conservar el historico de fuentes: $($_.Exception.Message)" }
     }
     if (-not $SinEstado) { Write-Estado $inicio $propuesta; Write-Log "estado.json actualizado (ultima_pasada = $inicio)" }
 }
@@ -289,6 +299,14 @@ finally {
     # Conservar solo los 30 ultimos logs
     Get-ChildItem $LogDir -Filter '*.log' | Sort-Object Name -Descending | Select-Object -Skip $KeepLogs |
         Remove-Item -Force -ErrorAction SilentlyContinue
+    # Historico de fuentes: borrar solo carpetas con formato yyyy-MM-dd_HHmm de mas de 30 dias
+    if (Test-Path -LiteralPath $Historico) {
+        $limite = (Get-Date).Date.AddDays(-$KeepHistoricoDias)
+        Get-ChildItem -LiteralPath $Historico -Directory -ErrorAction SilentlyContinue |
+            Where-Object { $_.Name -match '^\d{4}-\d{2}-\d{2}_\d{4}$' -and
+                           [datetime]::ParseExact($_.Name.Substring(0, 10), 'yyyy-MM-dd', $null) -lt $limite } |
+            Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+    }
     $lock.Close(); $lock.Dispose()
 }
 exit $exit
