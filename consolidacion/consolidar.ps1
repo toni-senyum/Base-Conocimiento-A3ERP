@@ -299,6 +299,33 @@ finally {
     # Conservar solo los 30 ultimos logs
     Get-ChildItem $LogDir -Filter '*.log' | Sort-Object Name -Descending | Select-Object -Skip $KeepLogs |
         Remove-Item -Force -ErrorAction SilentlyContinue
+    # Copia de seguridad en GitHub: se intenta siempre (con propuesta, SIN NOVEDADES o error). Un fallo nunca tumba la pasada.
+    try {
+        $hayRemoto = (Invoke-Git $Main @('remote', 'get-url', 'origin')).Code -eq 0
+        if ($hayRemoto) {
+            $env:GIT_TERMINAL_PROMPT = '0'      # sin peticiones por consola
+            $env:GCM_INTERACTIVE = 'never'      # Git Credential Manager no abre el navegador en una tarea desatendida
+            $job = Start-Job -ScriptBlock {
+                param($dir)
+                $o = & git -C $dir push origin main consolidacion 2>&1 | ForEach-Object { $_.ToString() }
+                [pscustomobject]@{ Code = $LASTEXITCODE; Out = ($o -join "`n") }
+            } -ArgumentList $Main
+            if (Wait-Job $job -Timeout 120) {
+                $res = Receive-Job $job
+                if ($res.Code -eq 0) { Write-Log 'git push origin main consolidacion: OK' }
+                else {
+                    Write-Log ("AVISO: git push fallo (codigo $($res.Code)): " + $res.Out)
+                    if ($res.Out -match '(?i)(authentication failed|could not read (username|password)|terminal prompts disabled|invalid username or password|\b40[13]\b|permission denied|credential|logon failed)') {
+                        Send-Notice 'Base conocimiento: renovar credencial de GitHub' 'El push a GitHub ha fallado por autenticacion. Ejecuta un git push manual en C:\SENYUM\base-conocimiento para volver a iniciar sesion.'
+                    }
+                }
+            } else {
+                Stop-Job $job
+                Write-Log 'AVISO: git push superó los 120 s (sin red?); se omite.'
+            }
+            Remove-Job $job -Force -ErrorAction SilentlyContinue
+        } else { Write-Log 'AVISO: no hay remoto origin; no se hace push.' }
+    } catch { Write-Log "AVISO: error al hacer push: $($_.Exception.Message)" }
     # Historico de fuentes: borrar solo carpetas con formato yyyy-MM-dd_HHmm de mas de 30 dias
     if (Test-Path -LiteralPath $Historico) {
         $limite = (Get-Date).Date.AddDays(-$KeepHistoricoDias)

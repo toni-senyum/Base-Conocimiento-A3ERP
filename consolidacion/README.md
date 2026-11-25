@@ -36,6 +36,7 @@ Docs de repos de C:\SENYUM (CLAUDE.md, docs/, CHANGELOG) ───────�
 | `estado.json` | Hora de inicio de la última pasada completada (lo escribe el script, no Claude) | no |
 | `trabajo/` | Inventario y sesiones extraídas de la pasada en curso (se vacía en cada ejecución) | no |
 | `logs/` | Salida de cada ejecución | no |
+| `trabajo-historico/<fecha>_<hhmm>/` | Fuentes extraídas de cada pasada con propuesta, para comprobar la evidencia en la revisión (se borran a los 30 días) | no |
 
 ## Revisar una propuesta
 
@@ -53,3 +54,42 @@ Abrir Claude Code en `C:\SENYUM\base-conocimiento` y pedir "revisa la consolidac
 - Deshacer una fusión: `git revert -m 1 <hash del merge>`.
 - Repetir un día: editar `ultima_pasada` en `estado.json` y lanzar `consolidar.ps1` a mano.
 - Resultado `INCOMPLETA`: `ultima_pasada` no avanza, así que la siguiente pasada vuelve a cubrir el mismo periodo.
+
+## Copia de seguridad y remoto
+
+- **Dónde está.** Repositorio de GitHub `https://github.com/toni-senyum/Base-Conocimiento-A3ERP` (remoto `origin`, debe ser
+  **privado**). Es la única copia fuera de este equipo: `C:\SENYUM` no está en OneDrive ni tiene Historial de archivos
+  ni copias de Windows.
+- **Cuándo se sube.** Al final de cada pasada (bloque `finally` de `consolidar.ps1`), con propuesta, `SIN NOVEDADES`,
+  `INCOMPLETA` o error: `git push origin main consolidacion`. Un fallo (sin red, credencial caducada, más de 120 s) no
+  tumba la pasada: queda un `AVISO` en el log. Si es de autenticación, sale la notificación
+  «Base conocimiento: renovar credencial de GitHub»; se arregla con un `git push` manual en `C:\SENYUM\base-conocimiento`
+  (Git Credential Manager abre el navegador una vez).
+- **Autenticación.** HTTPS con Git Credential Manager. Ningún token va en el repositorio, en el script ni en el log.
+  En la tarea programada se fuerza `GCM_INTERACTIVE=never` y `GIT_TERMINAL_PROMPT=0` para que nunca se quede esperando.
+- **Qué se sube.** Las ramas `main` y `consolidacion` con todo lo que está en git (skills, docs, herramientas,
+  `consolidacion/`, propuestas y `rechazados.md`).
+- **Qué NO se sube** (`.gitignore`, hay que recrearlo a mano en un equipo nuevo): `scripts/config.ini` (conexión local),
+  `consolidacion/estado.json`, `consolidacion/logs/`, `consolidacion/trabajo/`, `consolidacion/trabajo-historico/`
+  (fuentes extraídas de cada pasada con propuesta, 30 días), el token de Claude y la tarea programada.
+
+### Restaurar en un equipo nuevo
+
+1. **Clonar:** `git clone https://github.com/toni-senyum/Base-Conocimiento-A3ERP.git C:\SENYUM\base-conocimiento`
+   (la primera vez, Git Credential Manager pide el login en el navegador).
+2. **Worktree de la consolidación:**
+   `git -C C:\SENYUM\base-conocimiento worktree add C:\SENYUM\base-conocimiento-consolidacion consolidacion`
+   (si la rama no existe en local, `git fetch origin` antes; se crea desde `origin/consolidacion`).
+3. **Enlaces de skills** (junctions, desde `main`), en `%USERPROFILE%\.claude\skills`:
+   `a3rp-api-com`, `a3rp-diccionarios`, `a3rp-dll`, `a3rp-modelo-datos-sql` →
+   `C:\SENYUM\base-conocimiento\skills\<nombre>` (`mklink /J <enlace> <destino>`).
+4. **Configuración local:** copiar `scripts\config.example.ini` a `scripts\config.ini` y rellenarlo.
+5. **Token de Claude Code:** ejecutar `claude setup-token` y guardarlo como variable de **entorno de usuario**
+   `CLAUDE_CODE_OAUTH_TOKEN` (`[Environment]::SetEnvironmentVariable('CLAUDE_CODE_OAUTH_TOKEN','<token>','User')`).
+   El script lo lee de ahí si el proceso no lo hereda.
+6. **Tarea programada** «Senyum - Consolidación base conocimiento», con la cuenta del usuario (interactiva): L–V a las 19:00,
+   acción `wscript.exe "C:\SENYUM\base-conocimiento\consolidacion\lanzar-oculto.vbs"`, «ejecutar en cuanto sea posible si se
+   pasó la hora» y límite de 1 h.
+7. **Comprobar:** `consolidar.ps1 -SoloInventario` (sin Claude ni estado) y, después, `schtasks /run /tn "Senyum - Consolidación base conocimiento"`
+   y mirar en el último fichero de `logs/` la línea `git push origin main consolidacion: OK`.
+   `estado.json` no se restaura: si falta, la primera pasada mira las últimas 72 h.
