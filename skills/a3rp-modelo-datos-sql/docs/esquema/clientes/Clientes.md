@@ -1,7 +1,7 @@
 # Vista: CLIENTES (modelo Power BI: Clientes)
 
 **Módulo A3ERP**: Clientes
-**Tipo de objeto**: VIEW (confirmado en `INFORMATION_SCHEMA.TABLES` contra `X_DEMO` — no tiene índices propios)
+**Tipo de objeto**: VIEW (confirmado en `INFORMATION_SCHEMA.TABLES` contra una BD de pruebas — no tiene índices propios)
 **Descripción**: Ficha de cliente, con nombre/NIF/dirección ya resueltos desde `__ORGANIZACION` (de ahí que sea vista y no tabla base).
 
 ## Columnas relevantes
@@ -50,17 +50,15 @@ Verificado por SQL en OUTDOOR (proyecto RocRoi, 2026-10). Cada cliente tiene, al
 - 🔴 **Borrar la ficha borra sus cuentas propias** si no tienen apuntes: ver `contabilidad/CUENTAS.md`.
 - **NIF-IVA**: no hay un campo aparte. En las fichas UE va en `NIFCLI` **sin** el prefijo del país (`04072990247`, no `IT04072990247`); el país sale de `PAISFISCAL`. En la BD existe la función `AEAT_NIF_CALCULO`, que parece añadir el prefijo a partir de `PAISFISCAL` para AEAT (SII/349) — **no verificado** con una presentación real. Las facturas impresas muestran el NIF sin prefijo.
 - Cuidado con los NIF numéricos que han pasado por Excel: pierden los ceros iniciales (o salen en notación científica, p. ej. `2,10122E+11`).
-<<<<<<< main
 - **Longitudes del código postal y de la dirección fiscal** (`INFORMATION_SCHEMA.COLUMNS`: `varchar`,
   nulables; verificado en proyecto RocRoi, 2026-11; `DIRCLI` 60 y `POBCLI` 50 ya constan en la tabla de
   arriba): `DTOCLI` 10 (código postal), `DIRFISCAL` 120, `POBFISCAL` 50, `DTOFISCAL` 10. Los campos
   fiscales también están en `__ORGANIZACION` (comprobados `DIRFISCAL` 120 y `DTOFISCAL` 10). Leer las
   longitudes de `INFORMATION_SCHEMA` antes de generar ficheros de carga.
-=======
 
 ## Tabla base `__CLIENTES`: modelos de impresión y envío de documentos por email
 
-Verificado por SQL en a3ERP v15 (VM de pruebas, X_DEMO, 2026-11; proyecto CertificadosCalidad), asignando modelos desde la ficha y leyendo los campos. Tipos SQL no comprobados en `INFORMATION_SCHEMA`.
+Verificado por SQL en a3ERP v15 (una BD de pruebas v15; verificado en proyecto CertificadosCalidad, 2026-11), asignando modelos desde la ficha y leyendo los campos. Tipos SQL no comprobados en `INFORMATION_SCHEMA`.
 
 | Campo | En la ficha (bloque "Modelos de impresión y nº de copias") | Notas |
 |---|---|---|
@@ -75,7 +73,6 @@ Verificado por SQL en a3ERP v15 (VM de pruebas, X_DEMO, 2026-11; proyecto Certif
 | `E_MAIL_DOCS` | Email para documentos | Se usa cuando no hay destinatarios configurados (no validado del todo) |
 
 - **Valor de los `NOMMOD*`**: a3ERP guarda el **nombre de fichero del modelo con extensión** (p. ej. `LSTIMPRALBV.000`), sin ruta.
-- **"Según datos generales"** en la ficha = `_DATGEN_`. En código en producción (`ExportacionFacturasPDF`) también se trata `_DATGENMULT_` (multiempresa: se resuelve con `TIPOSCON.IDMULTIEMP`). Vacío y NULL equivalen a "sin modelo propio".
+- **"Según datos generales"** en la ficha = `_DATGEN_`. En código en producción (verificado en proyecto ExportacionFacturasPDF, 2026-07) también se trata `_DATGENMULT_` (multiempresa: se resuelve con `TIPOSCON.IDMULTIEMP`). Vacío y NULL equivalen a "sin modelo propio".
 - Los campos de copias y "Usa tallas" del mismo bloque no se han mapeado.
 - Cómo resolver el modelo efectivo e imprimir con él: `a3rp-api-com`, objeto `Listado`. Modelos de empresa: `configuracion/DATOSCONFIG.md`. Destinatarios por tipo de documento: `clientes/DestinatariosDocumentos.md`.
->>>>>>> zip

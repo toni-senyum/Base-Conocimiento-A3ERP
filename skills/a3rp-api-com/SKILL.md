@@ -79,18 +79,19 @@ enlace.Acabar();                        // solo si la conexión la abriste tú e
 Propiedades relevantes: `bError`, `Nerror`, `SMensaje` (info de error), `Estado` (`EstadoEnlace`:
 0 NoActivo, 1 Activo, 2 Conectado), `EmpresaActiva`, `Usuario`, `Conexion` /
 `ConexionSistema` (parámetros de conexión, sin contraseña), `VersionA3ERP`.
-Otras dos usadas en producción (`ExportacionFacturasPDF`): `RaiseOnException = true` (los errores
+Otras dos usadas en código en producción (verificado en proyecto ExportacionFacturasPDF, 2026-07): `RaiseOnException = true` (los errores
 de a3ERP llegan como excepción) y `VerBarraDeProgreso = false` (sin barra de progreso al imprimir).
 
 ### Dentro o fuera de a3ERP: cómo se inicializa y cuándo pide credenciales
 
-Verificado en a3ERP v15 (VM de pruebas, X_DEMO, 2026-11) y en código en producción:
+Las dos primeras filas están **leídas en código en producción** (no las probamos aparte); la tercera
+está **probada en a3ERP v15** (una BD de pruebas, 2026-11).
 
-| Dónde corre el código | Inicialización | ¿Pide credenciales? |
-|---|---|---|
-| DLL de eventos (dentro de a3ERP) | `Iniciar("", "")` + `SelecEmpresaActiva()` + `GetConexionDB("EMPRESA")` (`ExportacionFacturasPDF`) | No |
-| DLL de programas externos, en `Opcion` (dentro de a3ERP) | `SelecEmpresaActiva()` + `GetConexionDB("EMPRESA")`, **sin `Iniciar`** (`CertificadosCalidad`, `GestionImnovilizado`) | No |
-| Proceso aparte (PowerShell x86, consola, servicio) | `Iniciar("<empresa>", "")` o `SelecEmpresaActiva()` | **Sí**: diálogo "Conectar con el servidor: <SERVIDOR>\<INSTANCIA>" en **cada** proceso, no se recuerda entre ejecuciones |
+| Dónde corre el código | Inicialización | ¿Pide credenciales? | Origen |
+|---|---|---|---|
+| DLL de eventos (dentro de a3ERP) | `Iniciar("", "")` + `SelecEmpresaActiva()` + `GetConexionDB("EMPRESA")` | No | Leído en código en producción (verificado en proyecto ExportacionFacturasPDF, 2026-07) |
+| DLL de programas externos, en `Opcion` (dentro de a3ERP) | `SelecEmpresaActiva()` + `GetConexionDB("EMPRESA")`, **sin `Iniciar`** | No | Leído en código en producción (verificado en proyectos CertificadosCalidad y GestionImnovilizado) |
+| Proceso aparte (PowerShell x86, consola, servicio) | `Iniciar("<empresa>", "")` o `SelecEmpresaActiva()` | **Sí**: diálogo "Conectar con el servidor: <SERVIDOR>\<INSTANCIA>" en **cada** proceso, no se recuerda entre ejecuciones | Probado en a3ERP v15 (una BD de pruebas, 2026-11) |
 
 - Para pruebas desde PowerShell: el ActiveX es de 32 bits → usar PowerShell **x86**, en ventana
   visible, y rellenar el diálogo a mano. Nunca poner credenciales en scripts.
@@ -219,7 +220,7 @@ finally { m.Acabar(); Marshal.ReleaseComObject(m); }
   un código ya ocupado → reintentar (`Cancelar()` + comprobar si existe + pedir otro, máx. 3).
   Llamado tras `Nuevo()` funcionó en pruebas.
 - `Cancelar()` descarta el registro en curso; `OmitirMensajes` (bool) existe en la interfaz.
-- Campos que el maestro rellena por defecto: p. ej. `CTAAMORT` en `AMORTIZA` (X_DEMO: `28190000`).
+- Campos que el maestro rellena por defecto: p. ej. `CTAAMORT` en `AMORTIZA` (en una BD de pruebas: `28190000`).
 - `VINCULOS` **no es un maestro**: el objeto no la admite → INSERT con SQL parametrizado (ver
   `a3rp-modelo-datos-sql`, `sistema/VINCULOS.md`).
 
@@ -239,7 +240,7 @@ asiento.Acabar();
 - `AApunte`: 7 parámetros posicionales (moneda, cuenta, debe, concepto, haber, …). Sin analítica
   explícita: a3ERP aplica los centros de coste por defecto de la empresa.
 - `AApunteNax`: 13 parámetros posicionales, con los 3 centros de coste. Firma verificada con
-  a3ERP v14.05.02 (X_DEMO, 2026-10); si cambia la versión, fallaría en tiempo de ejecución.
+  a3ERP v14.05.02 (una BD de pruebas v14, 2026-10); si cambia la versión, fallaría en tiempo de ejecución.
   Documentar siempre la versión con la que se comprobó.
 - El diario `"1"` en `Nuevo` es lo habitual, pero hay empresas que usan otro: en una DLL que se
   distribuye, parametrizarlo o documentarlo como limitación (GestionImnovilizado lo tiene fijo y
@@ -260,15 +261,17 @@ op.Ejecutar();
 ```
 
 El PDF de referencia documenta además un objeto `OperacionesInmovilizado` con método `BajaElemento`
-(baja nativa de inmovilizado). No investigado ni presente en el interop de X_DEMO de 2026: verificar
+(baja nativa de inmovilizado). No investigado ni presente en el interop de la instalación de pruebas de 2026: verificar
 antes de usarlo.
 
 ---
 
 ## Objeto `Listado` — generar el PDF de un documento con su modelo de impresión
 
-Verificado en a3ERP v15 (VM de pruebas, X_DEMO, 2026-11; proyecto CertificadosCalidad) y en código
-en producción (`ExportacionFacturasPDF`, `Infraestructura\Servicios\ListadoExporter.cs`):
+Lo marcado como probado se verificó en a3ERP v15 (una BD de pruebas; verificado en proyecto
+CertificadosCalidad, 2026-11). El patrón de uso en C# y la resolución del modelo están leídos en
+código en producción (verificado en proyecto ExportacionFacturasPDF, 2026-07,
+`Infraestructura\Servicios\ListadoExporter.cs`):
 
 ```csharp
 Listado listado = null;
@@ -311,9 +314,9 @@ finally { try { listado?.Acabar(); } catch { } }
   (p. ej. `C:\Users\Public\Documents\A3\Listados`, recurso `A3ERPListados`), con los nombres en
   `Sistema\Listados.INI`. No están en la BD.
 - Para imprimir como la opción **"Según cliente"** de la ventana de impresión (ficha del cliente →
-  datos generales → original; confirmado por Toni para todos los documentos de clientes y
-  proveedores), emular la cascada. Versión de `ExportacionFacturasPDF` para facturas
-  (`ModeloFacturaResolver`):
+  datos generales → original; confirmado en pruebas para todos los documentos de clientes y
+  proveedores), emular la cascada. Versión leída en código en producción para facturas (verificado
+  en proyecto ExportacionFacturasPDF, 2026-07; `ModeloFacturaResolver`):
   1. `__CLIENTES.NOMMODFAC` si no es vacío, `_DATGEN_` ni `_DATGENMULT_`.
   2. Si es `_DATGENMULT_`: `TIPOSCON.IDMULTIEMP` del `TIPOCONT` del documento → `NOMMODFAC` de la fila
      de `DATOSCONFIG` con ese `IDMULTIEMP`.
@@ -322,7 +325,7 @@ finally { try { listado?.Acabar(); } catch { } }
   Para albaranes, lo mismo con `NOMMODALB` y `LSTIMPRALBV` (cascada cliente → datos generales
   probada en la VM; los pasos 2 y 3 por `TIPOCONT`/`IDMULTIEMP` vienen del código en producción, no
   probados en la VM). Campos y valores en `a3rp-modelo-datos-sql` (`Clientes.md`, `DATOSCONFIG.md`).
-- **Verifactu/SIF** (según `ExportacionFacturasPDF`, no probado en la VM): si la empresa lo tiene
+- **Verifactu/SIF** (leído en código en producción, verificado en proyecto ExportacionFacturasPDF, 2026-07; no probado en la VM): si la empresa lo tiene
   activo (`__LAF_DATOSCONFIG.ACTIVADO = 1`) y la serie no está excluida (`SERIES.NOAPLICA`), se usa
   la misma cascada con `NOMMODFACSIF` y el mismo `IdListado` `LSTIMPRFACV`.
 

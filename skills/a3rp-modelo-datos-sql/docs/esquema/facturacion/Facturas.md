@@ -1,7 +1,7 @@
 # Tabla: CABEFACV (modelo Power BI: Facturas)
 
 **Módulo A3ERP**: Facturación
-**Tipo de objeto**: TABLE (`BASE TABLE`, confirmado en `INFORMATION_SCHEMA.TABLES` contra `X_DEMO`)
+**Tipo de objeto**: TABLE (`BASE TABLE`, confirmado en `INFORMATION_SCHEMA.TABLES` contra una BD de pruebas)
 **Descripción**: Cabecera de factura de venta. Una fila = una factura (confirmada o borrador, rectificativa o no — el modelo filtra en el partition, ver gotchas).
 
 ## Columnas relevantes
@@ -25,8 +25,7 @@
 | TOTREC | `money` | Sí | Recargo de equivalencia. |
 | BORRADOR | `bit` | Sí | Filtro del modelo: solo se cargan filas con `BORRADOR = false` (facturas confirmadas). |
 | RECTIFICATIVA | `varchar(1)` | Sí | Filtro del modelo: solo se cargan filas con `RECTIFICATIVA = 'F'` (no rectificativas). |
-| TIPOCONT | ? | ? | Tipo contable de la factura. Se usa para buscar el modelo de impresión por defecto en `DATOSCONFIG` (código en producción de `ExportacionFacturasPDF`, 2026-07). Tipo no comprobado. |
-| CODCLIFAC | ? | ? | Cliente de facturación. **No verificado** (solo por el nombre; en X_DEMO no había facturas con un valor distinto de `CODCLI`). |
+| TIPOCONT | ? | ? | Tipo contable de la factura. Se usa para buscar el modelo de impresión por defecto en `DATOSCONFIG` (código en producción, verificado en proyecto ExportacionFacturasPDF, 2026-07). Tipo no comprobado. |
 
 ## Relaciones (declaradas o inferidas)
 
@@ -43,3 +42,7 @@
 - `IDFACV`, `NUMDOC`, `TOTDOC`, `BASE`, `TOTIVA`, `TOTREC` son todos tipo `money` en SQL Server, no `int`/`decimal` — Power Query los trae como `double`.
 - Además de `BORRADOR` en la factura, la **serie** puede ser de borradores: `SERIES.FACTURABORRADOR` (ver `configuracion/DATOSCONFIG.md`).
 - No se ha verificado en este pase si `CABEFACV` guarda también otros tipos de documento aparte de factura de venta (a confirmar antes de reutilizar esta tabla para otro módulo).
+
+## Pendiente de verificar
+
+- `CODCLIFAC` (cliente de facturación): existe en la tabla, pero su significado **no está verificado** (solo por el nombre). En una BD de pruebas v15 no había facturas con un valor distinto de `CODCLI`. Tipo y nulabilidad sin comprobar.

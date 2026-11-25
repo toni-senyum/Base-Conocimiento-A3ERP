@@ -4,7 +4,7 @@
 **Tipo de objeto**: TABLE (tipos y nulabilidad **no comprobados** en `INFORMATION_SCHEMA`)
 **Descripción**: configuración de la ficha de cliente de v15 que indica a qué contactos y cargos se envía cada tipo de documento por email.
 
-Verificado en a3ERP v15 (VM de pruebas, X_DEMO, 2026-11; proyecto CertificadosCalidad), detectando qué cambia en la BD al configurar un cliente desde la ficha.
+Verificado en a3ERP v15 (una BD de pruebas v15; verificado en proyecto CertificadosCalidad, 2026-11), detectando qué cambia en la BD al configurar un cliente desde la ficha.
 
 ## Columnas relevantes
 
@@ -37,7 +37,7 @@ Verificado en a3ERP v15 (VM de pruebas, X_DEMO, 2026-11; proyecto CertificadosCa
 ## Notas / gotchas
 
 - Contacto y cargo van en **tablas distintas**; un mismo tipo de documento puede tener ambos.
-- Al guardar la ficha, a3ERP **borra e inserta** todas las filas del cliente (no actualiza).
+- Al guardar la ficha, a3ERP **borra e inserta** todas las filas del cliente (no actualiza) (verificado en una sola prueba).
 - **Email** del destinatario: `__CONTACTOSRELACION.EMAIL` y, si está vacío, `__CONTACTOS.EMAIL`.
 - Casilla "Enviar por e-mail" del contacto: `__CONTACTOS.ENVIAREMAIL` (en `__CONTACTOSRELACION` suele quedar NULL). Del cliente: `__CLIENTES.ENVIARDOCEMAIL`; email de documentos por defecto: `__CLIENTES.E_MAIL_DOCS`.
 - El objeto ActiveX `DestinatarioCliente` lee/escribe esta misma configuración (devuelve ID de fila de estas tablas). Ver `a3rp-api-com`.
