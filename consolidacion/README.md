@@ -11,7 +11,7 @@ Sesiones de Claude Code (%USERPROFILE%\.claude\projects) ───────�
 Docs de repos de C:\SENYUM (CLAUDE.md, docs/, CHANGELOG) ───────┘        │
                                                                          ▼
                                        rama `consolidacion` (worktree aparte)
-                                       + consolidacion/propuestas/AAAA-MM-DD.md
+                                       + consolidacion/propuestas/AAAA-MM-DD_HHMM.md
                                                                          │
                                                   Toni revisa ──► merge a main
 ```
@@ -23,7 +23,7 @@ Docs de repos de C:\SENYUM (CLAUDE.md, docs/, CHANGELOG) ───────�
   ejecuta `claude -p` con `prompt-consolidador.md` y, según el resultado, actualiza `estado.json`. Trabaja en el worktree
   `C:\SENYUM\base-conocimiento-consolidacion` (rama `consolidacion`), nunca en `main`, porque las skills se cargan
   desde `main` mediante enlaces y lo no revisado no debe entrar en producción.
-- Si hay propuestas sin revisar, las siguientes pasadas se acumulan en la misma rama (una propuesta por día).
+- Si hay propuestas sin revisar, las siguientes pasadas se acumulan en la misma rama (una propuesta por pasada, con fecha y hora en el nombre).
 
 ## Ficheros
 
@@ -31,7 +31,7 @@ Docs de repos de C:\SENYUM (CLAUDE.md, docs/, CHANGELOG) ───────�
 |---|---|---|
 | `prompt-consolidador.md` | Instrucciones del consolidador (reglas, fuentes, mapa de destino, formato de propuesta) | sí |
 | `consolidar.ps1` | Script que lanza la pasada: worktree, `claude -p`, log, aviso | sí |
-| `propuestas/AAAA-MM-DD.md` | Propuesta de cada día (en la rama `consolidacion`) | sí |
+| `propuestas/AAAA-MM-DD_HHMM.md` | Propuesta de cada pasada, nunca se sobrescribe una existente (en la rama `consolidacion`) | sí |
 | `extraer_sesiones.py` | Convierte las sesiones `.jsonl` de Claude Code en texto compacto para la pasada | sí |
 | `estado.json` | Hora de inicio de la última pasada completada (lo escribe el script, no Claude) | no |
 | `trabajo/` | Inventario y sesiones extraídas de la pasada en curso (se vacía en cada ejecución) | no |

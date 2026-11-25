@@ -94,10 +94,11 @@ Si algo no encaja, no crees ficheros nuevos: proponlo en la propuesta como "Fich
 
 ## Paso 4. Propuesta
 
-Escribe `consolidacion/propuestas/AAAA-MM-DD.md`:
+Escribe `consolidacion/propuestas/AAAA-MM-DD_HHMM.md` (fecha y hora de inicio del bloque "Datos de esta pasada").
+**Nunca sobrescribas ni edites una propuesta existente**, aunque sea del mismo día:
 
 ```markdown
-# Consolidación AAAA-MM-DD
+# Consolidación AAAA-MM-DD HH:MM
 Fuentes: N notas de inbox · N sesiones de Claude Code · N repos con cambios de docs
 
 ## Cambios aplicados en la rama
@@ -115,13 +116,13 @@ En la columna **Fuente** indica siempre de dónde sale cada cambio de forma loca
 sesión de Claude Code (id de sesión de 8 caracteres, el nombre del `.txt` extraído) o repo + commit. Así la revisión puede
 comprobarlo sin buscar en los `.jsonl` crudos.
 
-Las correcciones (`CORRIGE`) van primero. Después, un commit en la rama `consolidacion`: `Consolidación AAAA-MM-DD`.
+Las correcciones (`CORRIGE`) van primero. Después, un commit en la rama `consolidacion`: `Consolidación AAAA-MM-DD HH:MM`.
 
 ## Paso 5. Cierre
 
 - No escribas `estado.json`: el script lo actualiza según tu resultado.
 - La **última línea** de tu respuesta, sin nada después, debe ser exactamente una de estas:
-  - `PROPUESTA: consolidacion/propuestas/AAAA-MM-DD.md (N cambios, N dudosos)`
+  - `PROPUESTA: consolidacion/propuestas/AAAA-MM-DD_HHMM.md (N cambios, N dudosos)`
   - `SIN NOVEDADES`
   - `INCOMPLETA: <motivo>` si no has podido leer alguna fuente o aplicar los cambios (permisos, errores…).
     No la disfraces de `SIN NOVEDADES`: con `INCOMPLETA` el script no avanza `ultima_pasada` y avisa a Toni.
