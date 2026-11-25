@@ -139,7 +139,7 @@ explorando A3ERP en varios proyectos:
 |---|---|---|
 | Facturación | Facturas, LineasFactura | ✅ explorado (proyecto A3ERP-PowerBI) |
 | Clientes | Clientes (VIEW), `__CLIENTES` (campos de cuenta, NIF-IVA) | ✅ explorado (proyecto A3ERP-PowerBI; campos de cuenta y nombres en proyecto RocRoi) |
-| Artículos/Almacén | Articulos, FamiliasArticulo, Familia_Estadis (VIEW), SIE_ESTRUCTURASFAMILIAARTICULO | ✅ explorado (proyecto A3ERP-PowerBI) |
+| Artículos/Almacén | Articulos, FamiliasArticulo, Familia_Estadis (VIEW), SIE_ESTRUCTURASFAMILIAARTICULO; TARIFAS/TARIFAVE (`articulos-almacen/Tarifas.md`); CABEINVE/LINEINVE/STOCKALM (`articulos-almacen/Inventarios.md`) | ✅ explorado (proyecto A3ERP-PowerBI; tarifas e inventarios: proyecto RocRoi/Migracion) |
 | Comercial | Representantes, CABEPEDC/CABEPEDV (cabeceras Pedido Compra/Venta) | ✅ explorado (proyecto A3ERP-PowerBI; pedidos: proyecto INTEMAN) |
 | Utilidades (no A3ERP) | Calendario (tabla calculada DAX, no vive en SQL Server) | ✅ explorado (proyecto A3ERP-PowerBI) |
 | Sistema (A3ERP$SISTEMA) | EMPRESAS | ✅ explorado (proyecto A3ERP-PowerBI) |

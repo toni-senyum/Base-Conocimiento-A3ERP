@@ -41,6 +41,11 @@ Repo del proyecto (documentación completa):
   `POBFISCAL`, `PROVIFISCAL`, `PAISFISCAL`). Si el país no es `ES`, `PROVIFISCAL` vacío.
 - En el alta, `PROVIFISCAL` / `PAISFISCAL` toman el valor por defecto de la empresa (en OUTDOOR,
   `08` / `ES`) aunque el cliente sea extranjero: enviarlos en el fichero.
+- `PROVIFISCAL` se guarda con **relleno** de ancho fijo (`'  22'`, no `'22'`; igual que `CODPROVI`
+  `'  25'`): comparar con `LTRIM`/`RTRIM` (verificado en proyecto RocRoi, 2026-11).
+- Al corregir la dirección fiscal de fichas extranjeras cambia también `TIPODOCNIF` en `CLIENTES` /
+  `PROVEED` y en su fila de `__ORGANIZACION`: es un efecto esperado, no un fallo (verificado en proyecto
+  RocRoi, 2026-11).
 
 ## Datos
 

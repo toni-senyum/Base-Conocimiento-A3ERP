@@ -50,3 +50,8 @@ Verificado por SQL en OUTDOOR (proyecto RocRoi, 2026-10). Cada cliente tiene, al
 - 🔴 **Borrar la ficha borra sus cuentas propias** si no tienen apuntes: ver `contabilidad/CUENTAS.md`.
 - **NIF-IVA**: no hay un campo aparte. En las fichas UE va en `NIFCLI` **sin** el prefijo del país (`04072990247`, no `IT04072990247`); el país sale de `PAISFISCAL`. En la BD existe la función `AEAT_NIF_CALCULO`, que parece añadir el prefijo a partir de `PAISFISCAL` para AEAT (SII/349) — **no verificado** con una presentación real. Las facturas impresas muestran el NIF sin prefijo.
 - Cuidado con los NIF numéricos que han pasado por Excel: pierden los ceros iniciales (o salen en notación científica, p. ej. `2,10122E+11`).
+- **Longitudes del código postal y de la dirección fiscal** (`INFORMATION_SCHEMA.COLUMNS`: `varchar`,
+  nulables; verificado en proyecto RocRoi, 2026-11; `DIRCLI` 60 y `POBCLI` 50 ya constan en la tabla de
+  arriba): `DTOCLI` 10 (código postal), `DIRFISCAL` 120, `POBFISCAL` 50, `DTOFISCAL` 10. Los campos
+  fiscales también están en `__ORGANIZACION` (comprobados `DIRFISCAL` 120 y `DTOFISCAL` 10). Leer las
+  longitudes de `INFORMATION_SCHEMA` antes de generar ficheros de carga.
