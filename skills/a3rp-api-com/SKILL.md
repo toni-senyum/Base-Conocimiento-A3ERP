@@ -5,7 +5,8 @@ description: >
   fuera, a través del objeto COM `a3ERPActiveX`: conectar con `Enlace`, obtener la conexión ADO
   real a la base de datos de una empresa, crear/modificar pedidos, facturas, albaranes, maestros
   (`Maestro`, `Pedido`, `Factura`, `Albaran`, `Oferta`...), generar asientos (`Asiento`, `AApunte`,
-  `AApunteNax`), abrir opciones de a3ERP (`Opcion`), o navegar cualquier objeto de
+  `AApunteNax`), abrir opciones de a3ERP (`Opcion`), generar el PDF de un albarán o factura con
+  su modelo de impresión (`Listado`), o navegar cualquier objeto de
   `a3ERPACTIVEX`. También para depurar errores COM al instanciar estos objetos y para ejecutar SQL
   propio con ADODB desde .NET (parámetros, fechas, `Command.Execute`). Si en cambio lo que
   se necesita es una DLL que a3ERP CARGA y LLAMA cuando el usuario hace algo dentro del programa
@@ -50,6 +51,8 @@ según lo que se necesite. Lista (no exhaustiva, ver `Ultima Vesion ActiveX.pdf`
 | `Seleccion` | Pantalla estándar de selección de a3ERP para cualquier tabla. |
 | `Asiento`, `Cartera`, `OperacionesCartera`, `Agrupacion`, `Remesa` | Contabilidad y cartera de efectos. |
 | `Opcion` / `OpcionModal` | Llamar a cualquier opción visual de a3ERP. |
+| `Listado` | Imprimir un listado o documento (albarán, factura...) con su modelo, p. ej. a PDF. Ver sección propia. |
+| `DestinatarioCliente` | Leer/escribir los destinatarios de documentos por email de un cliente (v15). |
 | `Expediente`, `Cuota`, `OrdenProduccion`, `Estructura`, `Presupuesto` | Otros módulos de negocio. |
 
 Cada objeto se instancia con su propia CoClass (patrón Delphi visto en ejemplos reales:
@@ -76,6 +79,23 @@ enlace.Acabar();                        // solo si la conexión la abriste tú e
 Propiedades relevantes: `bError`, `Nerror`, `SMensaje` (info de error), `Estado` (`EstadoEnlace`:
 0 NoActivo, 1 Activo, 2 Conectado), `EmpresaActiva`, `Usuario`, `Conexion` /
 `ConexionSistema` (parámetros de conexión, sin contraseña), `VersionA3ERP`.
+Otras dos usadas en producción (`ExportacionFacturasPDF`): `RaiseOnException = true` (los errores
+de a3ERP llegan como excepción) y `VerBarraDeProgreso = false` (sin barra de progreso al imprimir).
+
+### Dentro o fuera de a3ERP: cómo se inicializa y cuándo pide credenciales
+
+Verificado en a3ERP v15 (VM de pruebas, X_DEMO, 2026-11) y en código en producción:
+
+| Dónde corre el código | Inicialización | ¿Pide credenciales? |
+|---|---|---|
+| DLL de eventos (dentro de a3ERP) | `Iniciar("", "")` + `SelecEmpresaActiva()` + `GetConexionDB("EMPRESA")` (`ExportacionFacturasPDF`) | No |
+| DLL de programas externos, en `Opcion` (dentro de a3ERP) | `SelecEmpresaActiva()` + `GetConexionDB("EMPRESA")`, **sin `Iniciar`** (`CertificadosCalidad`, `GestionImnovilizado`) | No |
+| Proceso aparte (PowerShell x86, consola, servicio) | `Iniciar("<empresa>", "")` o `SelecEmpresaActiva()` | **Sí**: diálogo "Conectar con el servidor: <SERVIDOR>\<INSTANCIA>" en **cada** proceso, no se recuerda entre ejecuciones |
+
+- Para pruebas desde PowerShell: el ActiveX es de 32 bits → usar PowerShell **x86**, en ventana
+  visible, y rellenar el diálogo a mano. Nunca poner credenciales en scripts.
+- Desde PowerShell, `GetConexionDB("EMPRESA")` dio "Argumentos incorrectos" (probablemente por el
+  paso del VARIANT); en .NET dentro de a3ERP funciona. No concluyente.
 
 ### `GetConexionDB(Nombre: "EMPRESA" | "SISTEMA")` → conexión ADO real — la forma correcta de hacer SQL propio
 ```csharp
@@ -245,6 +265,76 @@ antes de usarlo.
 
 ---
 
+## Objeto `Listado` — generar el PDF de un documento con su modelo de impresión
+
+Verificado en a3ERP v15 (VM de pruebas, X_DEMO, 2026-11; proyecto CertificadosCalidad) y en código
+en producción (`ExportacionFacturasPDF`, `Infraestructura\Servicios\ListadoExporter.cs`):
+
+```csharp
+Listado listado = null;
+try
+{
+    listado = new Listado();
+    listado.Iniciar();                           // 🔴 antes de tocar propiedades
+    listado.IdListado = "LSTIMPRFACV";           // factura venta; albarán venta: "LSTIMPRALBV"
+    listado.Destino = DestinoListado.destPDF;    // = 2
+    listado.Fichero = rutaPdf;                   // la carpeta debe existir
+    listado.Copias = 1;
+    listado.Modelo = modelo;                     // resuelto por el código, ver abajo
+    listado.AnadirParametro("Identificador", idDoc.ToString()); // IDFACV / IDALBV
+    listado.Imprimir();
+    if (enlace.bError) throw new InvalidOperationException(enlace.sMensaje);
+}
+finally { try { listado?.Acabar(); } catch { } }
+```
+
+- Sin `listado.Iniciar()`, asignar propiedades da **"El objeto listado no está iniciado"**.
+- **No muestra ninguna ventana** (ni vista previa, ni impresora, ni avisos), tampoco en los casos de
+  error. Unos 4 s por documento en la VM.
+- **Errores (probados):**
+  - Documento inexistente → **genera un PDF vacío** (cabecera de empresa, nº 0) sin excepción →
+    comprobar en BD que el documento existe antes de imprimir.
+  - `Fichero` ya existente → lo sobrescribe sin preguntar.
+  - Carpeta de `Fichero` inexistente → excepción "File could not be created!" y `Enlace.bError =
+    True` / `sMensaje` → crear la carpeta antes.
+- No hay en el ActiveX ningún método para lanzar el **envío nativo por email** de documentos (v15):
+  si hace falta enviar, generar el PDF con `Listado` y montar el correo aparte.
+
+### `Modelo`: el código tiene que resolverlo
+
+- Con `Modelo` vacío, `Listado` imprime **siempre el modelo original**: ignora el modelo del
+  cliente y el de datos generales (probado con modelos personalizados).
+- Acepta el **nombre de fichero con extensión** (`LSTIMPRALBV.000`), que es lo que guarda a3ERP en
+  los campos `NOMMOD*`, o el nombre descriptivo de `Listados.INI`. Un valor que no existe se
+  **ignora sin error** (sale el original).
+- Los modelos son ficheros `<IdListado>.NNN` en la carpeta `Listados` de los datos compartidos
+  (p. ej. `C:\Users\Public\Documents\A3\Listados`, recurso `A3ERPListados`), con los nombres en
+  `Sistema\Listados.INI`. No están en la BD.
+- Para imprimir como la opción **"Según cliente"** de la ventana de impresión (ficha del cliente →
+  datos generales → original; confirmado por Toni para todos los documentos de clientes y
+  proveedores), emular la cascada. Versión de `ExportacionFacturasPDF` para facturas
+  (`ModeloFacturaResolver`):
+  1. `__CLIENTES.NOMMODFAC` si no es vacío, `_DATGEN_` ni `_DATGENMULT_`.
+  2. Si es `_DATGENMULT_`: `TIPOSCON.IDMULTIEMP` del `TIPOCONT` del documento → `NOMMODFAC` de la fila
+     de `DATOSCONFIG` con ese `IDMULTIEMP`.
+  3. `NOMMODFAC` de la fila de `DATOSCONFIG` del `TIPOCONT` del documento; si no, la primera fila.
+  4. Original (pasar vacío).
+  Para albaranes, lo mismo con `NOMMODALB` y `LSTIMPRALBV` (cascada cliente → datos generales
+  probada en la VM; los pasos 2 y 3 por `TIPOCONT`/`IDMULTIEMP` vienen del código en producción, no
+  probados en la VM). Campos y valores en `a3rp-modelo-datos-sql` (`Clientes.md`, `DATOSCONFIG.md`).
+- **Verifactu/SIF** (según `ExportacionFacturasPDF`, no probado en la VM): si la empresa lo tiene
+  activo (`__LAF_DATOSCONFIG.ACTIVADO = 1`) y la serie no está excluida (`SERIES.NOAPLICA`), se usa
+  la misma cascada con `NOMMODFACSIF` y el mismo `IdListado` `LSTIMPRFACV`.
+
+## Objeto `DestinatarioCliente`
+
+Existe en el ActiveX de v15 y lee/escribe la configuración de destinatarios de documentos por email
+de un cliente. Probado solo en lectura: devuelve los **ID de fila** de las tablas de destinatarios,
+no el `IDCARGO` ni el `IDCONTACTORELACION`. Para obtener los emails es más directo leer las tablas
+por SQL (ver `a3rp-modelo-datos-sql`, `clientes/DestinatariosDocumentos.md`).
+
+---
+
 ## Errores COM comunes
 
 ```csharp
@@ -267,7 +357,11 @@ máquina de 64 bits: .NET compila entonces en 64 bits y no encuentra el COM de 3
 ## Checklist antes de usar esta API
 
 - [ ] Proyecto compilado en x86 (Platform Target), nunca Any CPU/x64.
-- [ ] `Enlace.Iniciar` llamado (y con conexión válida) antes de usar cualquier otro objeto.
+- [ ] `Enlace` inicializado (y con conexión válida) antes de usar cualquier otro objeto: `Iniciar`
+      en DLL de eventos y procesos externos; en `Opcion` de programas externos basta
+      `SelecEmpresaActiva()` (ver "Dentro o fuera de a3ERP").
+- [ ] `Listado`: `listado.Iniciar()` antes de las propiedades, documento validado en BD, carpeta
+      creada, `Modelo` resuelto por el código y `Acabar()` en `finally`.
 - [ ] Si hace falta SQL propio, usar `Enlace.GetConexionDB` — nunca abrir una conexión nueva con
       credenciales propias, y nunca cerrar la conexión devuelta.
 - [ ] Nombre de objeto/propiedad/método verificado contra `Ultima Vesion ActiveX.pdf`, no inventado.

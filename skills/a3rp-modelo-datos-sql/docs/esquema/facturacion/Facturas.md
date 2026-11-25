@@ -25,6 +25,8 @@
 | TOTREC | `money` | Sí | Recargo de equivalencia. |
 | BORRADOR | `bit` | Sí | Filtro del modelo: solo se cargan filas con `BORRADOR = false` (facturas confirmadas). |
 | RECTIFICATIVA | `varchar(1)` | Sí | Filtro del modelo: solo se cargan filas con `RECTIFICATIVA = 'F'` (no rectificativas). |
+| TIPOCONT | ? | ? | Tipo contable de la factura. Se usa para buscar el modelo de impresión por defecto en `DATOSCONFIG` (código en producción de `ExportacionFacturasPDF`, 2026-07). Tipo no comprobado. |
+| CODCLIFAC | ? | ? | Cliente de facturación. **No verificado** (solo por el nombre; en X_DEMO no había facturas con un valor distinto de `CODCLI`). |
 
 ## Relaciones (declaradas o inferidas)
 
@@ -39,4 +41,5 @@
 
 - El modelo de A3ERP-PowerBI filtra explícitamente en el partition: solo `BORRADOR = false AND RECTIFICATIVA = 'F'`. Sin este filtro, cualquier medida de importes sumaría borradores y facturas rectificativas — verificar siempre este filtro antes de reutilizar `CABEFACV` en otro proyecto.
 - `IDFACV`, `NUMDOC`, `TOTDOC`, `BASE`, `TOTIVA`, `TOTREC` son todos tipo `money` en SQL Server, no `int`/`decimal` — Power Query los trae como `double`.
+- Además de `BORRADOR` en la factura, la **serie** puede ser de borradores: `SERIES.FACTURABORRADOR` (ver `configuracion/DATOSCONFIG.md`).
 - No se ha verificado en este pase si `CABEFACV` guarda también otros tipos de documento aparte de factura de venta (a confirmar antes de reutilizar esta tabla para otro módulo).

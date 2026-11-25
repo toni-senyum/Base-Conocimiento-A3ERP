@@ -324,6 +324,15 @@ desaparece justo en la DLL que se distribuye. Se ven con DebugView (Sysinternals
   varios documentos/maestros a la vez y disparar eventos intercalados. Si hace falta compartir
   estado entre llamadas, etiquetarlo por documento/IdDoc, nunca en una variable de instancia sin
   clave.
+- 🔴 **Si la clase implementa `ActivarMetodosAlServir()`, declararlo también en
+  `ListaProcedimientos()`** (y en la interfaz COM). En `ExportacionFacturasPDF` el método existía y
+  devolvía `true`, pero no estaba en la lista: eso bloqueó el disparo de
+  `AntesDeGuardarDocumentoV2`/`DespuesDeGuardarDocumentoV2` con `estado=3` (Servir) **para todas las
+  DLLs registradas en `DLLS`**, no solo para la suya, fuese cual fuese el `ORDENDEEJECUCION`. Se
+  manifestó como un fallo en otra DLL (`ValidacionOfertasCompraCL`: el Servir de ofertas de compra
+  dejó de validar). Corregido declarándolo y confirmado por logs en producción (2026-07, bug
+  MEJ-BUG-01). Lección general: una DLL mal declarada puede romper los eventos de las demás; si un
+  evento deja de dispararse, revisar `ListaProcedimientos()` de **todas** las DLLs de la tabla.
 - Activar el log de DLLs durante desarrollo/pruebas: `%APPDATA%\A3\CONFIGURACION.INI` →
   ```ini
   [DLLS]
@@ -427,6 +436,15 @@ identidad COM e instalador**: `GestionImnovilizado` en `C:\SENYUM\GestionImnovil
 y `docs/HISTORICO_BUGS.md` documentan cada fallo encontrado y su causa real; lo abierto está en
 `docs/ESTADO_Y_PENDIENTES.md`.
 
+Para **DLL de eventos que genera el PDF de un documento con su modelo de impresión** (objeto
+`Listado`, resolución del modelo "según cliente", detección de Verifactu, cachés con caducidad,
+reintentos ante bloqueo al marcar el documento, logger con niveles): `ExportacionFacturasPDF`
+(v1.1, en producción desde 2026-07) en
+`...\Senyum\Programacion\Senyum\Clientes\Federaciones Enric Serrano\ExportacionFacturasPDF\`
+(repo git local). Engancha `DespuesDeGuardarDocumentoV2` sobre `"FV"` (estados 0 y 1) y deja el PDF
+de cada factura en una carpeta. Su `CHANGELOG.md` documenta el bug de `ActivarMetodosAlServir`
+(ver "Reglas duras"). Detalle del objeto `Listado` en `a3rp-api-com`.
+
 ---
 
 ## Buenas prácticas de arquitectura y control de versiones (git/GitHub)
@@ -482,7 +500,8 @@ del proyecto sea igual de rígido. Aplicar siempre:
 
 ## Checklist antes de entregar una DLL de eventos
 
-- [ ] `ListaProcedimientos()` implementado y devuelve exactamente los eventos usados.
+- [ ] `ListaProcedimientos()` implementado y devuelve exactamente los eventos usados, incluido
+      `ActivarMetodosAlServir` si la clase lo implementa (si no, bloquea el Servir de todas las DLLs).
 - [ ] Platform Target = x86, clase marcada `[ComVisible(true)]`.
 - [ ] Conexión a BD obtenida vía `Enlace.GetConexionDB`, nunca creada con credenciales propias, y
       nunca cerrada.

@@ -138,8 +138,14 @@ explorando A3ERP en varios proyectos:
 | Módulo | Tablas/vistas exploradas | Estado |
 |---|---|---|
 | Facturación | Facturas, LineasFactura | ✅ explorado (proyecto A3ERP-PowerBI) |
+<<<<<<< main
 | Clientes | Clientes (VIEW), `__CLIENTES` (campos de cuenta, NIF-IVA) | ✅ explorado (proyecto A3ERP-PowerBI; campos de cuenta y nombres en proyecto RocRoi) |
 | Artículos/Almacén | Articulos, FamiliasArticulo, Familia_Estadis (VIEW), SIE_ESTRUCTURASFAMILIAARTICULO; TARIFAS/TARIFAVE (`articulos-almacen/Tarifas.md`); CABEINVE/LINEINVE/STOCKALM (`articulos-almacen/Inventarios.md`) | ✅ explorado (proyecto A3ERP-PowerBI; tarifas e inventarios: proyecto RocRoi/Migracion) |
+=======
+| Clientes | Clientes (VIEW), `__CLIENTES` (campos de cuenta, NIF-IVA, modelos de impresión `NOMMOD*`, email de documentos), destinatarios de documentos v15 (`clientes/DestinatariosDocumentos.md`) | ✅ explorado (proyecto A3ERP-PowerBI; campos de cuenta y nombres en proyecto RocRoi; modelos y destinatarios en proyecto CertificadosCalidad, X_DEMO v15 2026-11) |
+| Configuración | DATOSCONFIG (modelos por defecto `NOMMOD*`, filas por `TIPOCONT`/`IDMULTIEMP`), `__LAF_DATOSCONFIG` (Verifactu), `SERIES` (borrador, no aplica Verifactu) en `configuracion/DATOSCONFIG.md` | 🔶 parcial (proyectos CertificadosCalidad y ExportacionFacturasPDF) |
+| Artículos/Almacén | Articulos, FamiliasArticulo, Familia_Estadis (VIEW), SIE_ESTRUCTURASFAMILIAARTICULO | ✅ explorado (proyecto A3ERP-PowerBI) |
+>>>>>>> zip
 | Comercial | Representantes, CABEPEDC/CABEPEDV (cabeceras Pedido Compra/Venta) | ✅ explorado (proyecto A3ERP-PowerBI; pedidos: proyecto INTEMAN) |
 | Utilidades (no A3ERP) | Calendario (tabla calculada DAX, no vive en SQL Server) | ✅ explorado (proyecto A3ERP-PowerBI) |
 | Sistema (A3ERP$SISTEMA) | EMPRESAS | ✅ explorado (proyecto A3ERP-PowerBI) |
