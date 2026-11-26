@@ -6,6 +6,9 @@
   a texto y, si hay algo, asegura la rama `consolidacion` y su worktree, fusiona main en ella y lanza Claude Code sin
   interfaz con consolidacion\prompt-consolidador.md. El script (no Claude) gestiona estado.json.
   Códigos de salida: 0 bien (con o sin propuesta), 1 error o pasada incompleta.
+.PARAMETER AlIniciarSesion
+  Lo pasa el desencadenador «Al iniciar sesión» (recupera una pasada perdida por equipo apagado). Si ultima_pasada
+  tiene menos de 12 h, registra «Pasada al iniciar sesión omitida» y sale con 0 sin hacer nada más.
 .PARAMETER UltimaPasada
   Solo pruebas: fuerza el valor de ultima_pasada (ISO 8601). Con esto el script nunca escribe estado.json.
 .PARAMETER SoloInventario
@@ -16,6 +19,7 @@
   Solo pruebas: las notificaciones usan el globo de la bandeja como si BurntToast fallara.
 #>
 param(
+    [switch]$AlIniciarSesion,
     [string]$UltimaPasada,
     [switch]$SoloInventario,
     [string]$SimularSalida,
@@ -102,6 +106,18 @@ function Find-Repos([string]$Dir, [int]$Nivel) {
 function Write-Estado($Inicio, $Propuesta) {
     $json = [ordered]@{ ultima_pasada = $Inicio; ultima_propuesta = $Propuesta } | ConvertTo-Json
     [IO.File]::WriteAllText($Estado, $json, (New-Object System.Text.UTF8Encoding($false)))
+}
+
+# --- Al iniciar sesión: solo si la última pasada es antigua (>= 12 h) ---------------------------------
+if ($AlIniciarSesion -and (Test-Path $Estado)) {
+    try {
+        $prevPasada = [datetimeoffset]::Parse((Get-Content -Raw -Encoding UTF8 $Estado | ConvertFrom-Json).ultima_pasada)
+        $horas = ([datetimeoffset](Get-Date) - $prevPasada).TotalHours
+        if ($horas -lt 12) {
+            Write-Log ('Pasada al iniciar sesión omitida: última pasada hace {0:N1} h' -f $horas)
+            exit 0
+        }
+    } catch { Write-Log "AlIniciarSesion: no se pudo leer estado.json ($($_.Exception.Message)); sigo con la pasada." }
 }
 
 # --- Bloqueo: una sola ejecución a la vez -------------------------------------------------------------

@@ -7,7 +7,7 @@ para revisar lo trabajado y proponer cambios en la base. **Nada entra en `main` 
 
 ```
 Chats Cowork/claude.ai ──"captura para la base"──► _inbox/*.md ─┐
-Sesiones de Claude Code (%USERPROFILE%\.claude\projects) ───────┼─► consolidar.ps1 (19:00, L-V)
+Sesiones de Claude Code (%USERPROFILE%\.claude\projects) ───────┼─► consolidar.ps1 (19:00, L-V; y al iniciar sesión si la última pasada tiene ≥ 12 h)
 Docs de repos de C:\SENYUM (CLAUDE.md, docs/, CHANGELOG) ───────┘        │
                                                                          ▼
                                        rama `consolidacion` (worktree aparte)
@@ -92,6 +92,15 @@ Abrir Claude Code en `C:\SENYUM\base-conocimiento` y pedir "revisa la consolidac
 6. **Tarea programada** «Senyum - Consolidación base conocimiento», con la cuenta del usuario (interactiva): L–V a las 19:00,
    acción `wscript.exe "C:\SENYUM\base-conocimiento\consolidacion\lanzar-oculto.vbs"`, «ejecutar en cuanto sea posible si se
    pasó la hora» y límite de 1 h.
+   **Segundo desencadenador (al iniciar sesión).** Si el equipo está apagado a las 19:00, «ejecutar en cuanto sea posible»
+   lo intenta al arrancar, pero con una tarea interactiva falla si aún no hay sesión (evento 332) y no reintenta. Para
+   recuperar esa pasada hay una segunda tarea, «Senyum - Consolidación base conocimiento (inicio de sesión)», con la misma
+   cuenta, desencadenador «Al iniciar sesión» (solo ese usuario) con 3 min de retraso y acción
+   `wscript.exe "...\lanzar-oculto.vbs" -AlIniciarSesion` (el .vbs reenvía sus argumentos a `consolidar.ps1`).
+   Es una tarea aparte y no un segundo desencadenador de la principal porque Windows no permite argumentos distintos por
+   desencadenador, y así la de las 19:00 no lleva el parámetro. Con `-AlIniciarSesion`, si `ultima_pasada` de
+   `estado.json` tiene menos de 12 h, el script registra «Pasada al iniciar sesión omitida: última pasada hace X h» y
+   sale con 0 sin hacer nada más; si tiene 12 h o más (o falta `estado.json`), hace la pasada normal.
 7. **Comprobar:** `consolidar.ps1 -SoloInventario` (sin Claude ni estado) y, después, `schtasks /run /tn "Senyum - Consolidación base conocimiento"`
    y mirar en el último fichero de `logs/` la línea `git push origin main consolidacion: OK`.
    `estado.json` no se restaura: si falta, la primera pasada mira las últimas 72 h.
