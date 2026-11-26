@@ -7,8 +7,11 @@
   interfaz con consolidacion\prompt-consolidador.md. El script (no Claude) gestiona estado.json.
   Códigos de salida: 0 bien (con o sin propuesta), 1 error o pasada incompleta.
 .PARAMETER AlIniciarSesion
-  Lo pasa el desencadenador «Al iniciar sesión» (recupera una pasada perdida por equipo apagado). Si ultima_pasada
-  tiene menos de 12 h, registra «Pasada al iniciar sesión omitida» y sale con 0 sin hacer nada más.
+  Lo pasa el desencadenador «Al iniciar sesión» (recupera una pasada perdida por equipo apagado). Calcula la última
+  cita programada ya pasada (día laborable L-V más reciente a las 19:00, anterior a ahora): si ultima_pasada es igual
+  o posterior, registra «Pasada al iniciar sesión omitida» y sale con 0 sin hacer nada más; si es anterior, pasada normal.
+.PARAMETER AhoraSimulado
+  Solo pruebas: sustituye «ahora» (ISO 8601) en el cálculo de la cita de -AlIniciarSesion.
 .PARAMETER UltimaPasada
   Solo pruebas: fuerza el valor de ultima_pasada (ISO 8601). Con esto el script nunca escribe estado.json.
 .PARAMETER SoloInventario
@@ -20,6 +23,7 @@
 #>
 param(
     [switch]$AlIniciarSesion,
+    [string]$AhoraSimulado,
     [string]$UltimaPasada,
     [switch]$SoloInventario,
     [string]$SimularSalida,
@@ -108,16 +112,22 @@ function Write-Estado($Inicio, $Propuesta) {
     [IO.File]::WriteAllText($Estado, $json, (New-Object System.Text.UTF8Encoding($false)))
 }
 
-# --- Al iniciar sesión: solo si la última pasada es antigua (>= 12 h) ---------------------------------
-if ($AlIniciarSesion -and (Test-Path $Estado)) {
+# --- Al iniciar sesión: solo si falta la pasada de la última cita (L-V 19:00) ya pasada -----------------
+if ($AlIniciarSesion) {
     try {
-        $prevPasada = [datetimeoffset]::Parse((Get-Content -Raw -Encoding UTF8 $Estado | ConvertFrom-Json).ultima_pasada)
-        $horas = ([datetimeoffset](Get-Date) - $prevPasada).TotalHours
-        if ($horas -lt 12) {
-            Write-Log ('Pasada al iniciar sesión omitida: última pasada hace {0:N1} h' -f $horas)
+        $ahora = if ($AhoraSimulado) { [datetimeoffset]::Parse($AhoraSimulado) } else { [datetimeoffset](Get-Date) }
+        # Última cita programada ya pasada: el día laborable L-V más reciente a las 19:00, anterior a ahora
+        $cita = [datetimeoffset]::new($ahora.Year, $ahora.Month, $ahora.Day, 19, 0, 0, $ahora.Offset)
+        while ($cita -gt $ahora -or $cita.DayOfWeek -in 'Saturday', 'Sunday') { $cita = $cita.AddDays(-1) }
+        $prev = $null
+        if ($UltimaPasada) { $prev = [datetimeoffset]::Parse($UltimaPasada) }
+        elseif (Test-Path $Estado) { $prev = [datetimeoffset]::Parse((Get-Content -Raw -Encoding UTF8 $Estado | ConvertFrom-Json).ultima_pasada) }
+        if ($prev -and $prev -ge $cita) {
+            Write-Log ('Pasada al iniciar sesión omitida: ya hubo pasada tras la cita del {0} 19:00' -f $cita.ToString('yyyy-MM-dd'))
             exit 0
         }
-    } catch { Write-Log "AlIniciarSesion: no se pudo leer estado.json ($($_.Exception.Message)); sigo con la pasada." }
+        Write-Log ('AlIniciarSesion: la última pasada es anterior a la cita del {0} 19:00; hago la pasada.' -f $cita.ToString('yyyy-MM-dd'))
+    } catch { Write-Log "AlIniciarSesion: no se pudo evaluar la cita ($($_.Exception.Message)); sigo con la pasada." }
 }
 
 # --- Bloqueo: una sola ejecución a la vez -------------------------------------------------------------

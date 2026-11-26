@@ -98,9 +98,7 @@ Abrir Claude Code en `C:\SENYUM\base-conocimiento` y pedir "revisa la consolidac
    cuenta, desencadenador «Al iniciar sesión» (solo ese usuario) con 3 min de retraso y acción
    `wscript.exe "...\lanzar-oculto.vbs" -AlIniciarSesion` (el .vbs reenvía sus argumentos a `consolidar.ps1`).
    Es una tarea aparte y no un segundo desencadenador de la principal porque Windows no permite argumentos distintos por
-   desencadenador, y así la de las 19:00 no lleva el parámetro. Con `-AlIniciarSesion`, si `ultima_pasada` de
-   `estado.json` tiene menos de 12 h, el script registra «Pasada al iniciar sesión omitida: última pasada hace X h» y
-   sale con 0 sin hacer nada más; si tiene 12 h o más (o falta `estado.json`), hace la pasada normal.
+   desencadenador, y así la de las 19:00 no lleva el parámetro. Con `-AlIniciarSesion` el script calcula la última cita programada ya pasada (el día laborable L–V más reciente a las 19:00, anterior a ahora). Si `ultima_pasada` de `estado.json` es igual o posterior, registra «Pasada al iniciar sesión omitida: ya hubo pasada tras la cita del <fecha> 19:00» y sale con 0 sin hacer nada más; si es anterior (o falta `estado.json`), hace la pasada normal. Para probarlo: `-AlIniciarSesion -UltimaPasada <iso> [-AhoraSimulado <iso>]` (con `-SoloInventario` para no lanzar Claude); nunca escribe `estado.json`.
 7. **Comprobar:** `consolidar.ps1 -SoloInventario` (sin Claude ni estado) y, después, `schtasks /run /tn "Senyum - Consolidación base conocimiento"`
    y mirar en el último fichero de `logs/` la línea `git push origin main consolidacion: OK`.
    `estado.json` no se restaura: si falta, la primera pasada mira las últimas 72 h.
