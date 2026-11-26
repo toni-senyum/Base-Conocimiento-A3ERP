@@ -425,8 +425,7 @@ Antes de implementar un evento nuevo o dudar del formato de un parámetro, **bus
 DLL de eventos real desplegada** cuyo código fuente esté accesible en algún proyecto de cliente
 (no solo el `.dll` compilado en `Extensiones\<Fabricante>\<Producto>\Binarios\`, que no sirve de
 referencia de código). Ejemplo ya usado con éxito en el proyecto INTEMAN: código fuente de
-`ValidacionOfertasCompraCL` en
-`Clientes\Federación Catalana Natacion\Desarrollos\A3ERPValidacionOfertasCompra\ClassLibrary\` —
+`ValidacionOfertasCompraCL` (ruta en «Proyectos de referencia» del `README.md`) —
 confirmó tanto el patrón de conexión (`Enlace`/`GetConexionDB`) como el formato real de `Cabecera`
 (`Utils\CabeceraMapper.cs`), corrigiendo una hipótesis de diseño basada solo en el manual.
 

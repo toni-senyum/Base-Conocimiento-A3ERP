@@ -1,7 +1,7 @@
 # Tabla: REPRESEN (modelo Power BI: Representantes)
 
 **Módulo A3ERP**: Comercial
-**Tipo de objeto**: TABLE (`BASE TABLE`, confirmado en `INFORMATION_SCHEMA.TABLES` contra `X_DEMO`)
+**Tipo de objeto**: TABLE (`BASE TABLE`, confirmado en `INFORMATION_SCHEMA.TABLES` contra una BD de pruebas)
 **Descripción**: Representante/agente comercial. Una fila = un representante.
 
 ## Columnas relevantes
@@ -22,4 +22,4 @@
 
 ## Notas / gotchas
 
-- Tabla pequeña y sencilla en `X_DEMO` (4 filas en el modelo actual). Sin hallazgos propios más allá de la estructura de columnas y las 2 relaciones de arriba — pendiente de profundizar si el proyecto empieza a reportar por comercial.
+- Tabla pequeña y sencilla en una BD de pruebas (4 filas en el modelo actual). Sin hallazgos propios más allá de la estructura de columnas y las 2 relaciones de arriba — pendiente de profundizar si el proyecto empieza a reportar por comercial.

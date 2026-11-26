@@ -44,13 +44,13 @@ grupo, subgrupo, cuenta, subcuenta de detalle).
   `PLACON='NPGC'` explícitamente (la vista no lo hace por defecto).
 - **Plan activo de la empresa: `DATOSCON.PLACON`** (una sola fila). Es la forma de no fijar `'NPGC'`
   en el código: leerlo de ahí y usar `'NPGC'` solo como valor de reserva si viniera vacío.
-  Verificado en `X_DEMO` (2026-10, proyecto GestionImnovilizado): `DATOSCON.PLACON = 'NPGC'`; 1.509
+  Verificado en una BD de pruebas (2026-10, proyecto GestionImnovilizado): `DATOSCON.PLACON = 'NPGC'`; 1.509
   cuentas NPGC (471 de detalle) y 732 PGC; las 139 cuentas usadas en `__ASIENTOS` son todas NPGC.
 - **Unicidad garantizada**: índice único `IDX_CUENTAS (PLACON, CUENTA)`. Dentro de un plan no hay
-  códigos repetidos; los 627 repetidos de X_DEMO son el mismo código en los dos planes, a veces con
+  códigos repetidos; los 627 repetidos de una BD de pruebas son el mismo código en los dos planes, a veces con
   descripción distinta (p. ej. `28130000`).
-- **Estructura de niveles**: `DATOSCON.COMPOSICI1..5` (dígitos por nivel; X_DEMO: 2/1/1/0/4 → cuentas
-  de detalle de 8 dígitos). En X_DEMO coinciden siempre `DETALLE='T'`, `NIVEL=5` y longitud 8, pero
+- **Estructura de niveles**: `DATOSCON.COMPOSICI1..5` (dígitos por nivel; una BD de pruebas: 2/1/1/0/4 → cuentas
+  de detalle de 8 dígitos). En una BD de pruebas coinciden siempre `DETALLE='T'`, `NIVEL=5` y longitud 8, pero
   el indicador fiable entre empresas es **`DETALLE='T'`** (la longitud depende de la configuración).
 - **Bloqueo**: columnas `BLOQUEADO` (+ `MOTIVOBLOQUEO`), `OBSOLETO` y `DESDEFECHA`/`HASTAFECHA`;
   normalmente `NULL` → filtrar con `ISNULL(BLOQUEADO,'F') <> 'T' AND ISNULL(OBSOLETO,'F') <> 'T'`.
@@ -67,9 +67,9 @@ grupo, subgrupo, cuenta, subcuenta de detalle).
 - Las funciones de apunte de a3ERPActiveX (`AApunte`, `AApunteNax`) reciben el **código** de cuenta,
   no `IDCUENTA`; a3ERP lo resuelve contra el plan activo.
 - Cuentas de pérdidas por baja de inmovilizado (PGC): `670` intangible, `671` material, `672`
-  inversiones inmobiliarias. En X_DEMO solo existe la subcuenta `67100000`.
+  inversiones inmobiliarias. En una BD de pruebas solo existe la subcuenta `67100000`.
 - 🔴 **Borrar una ficha de cliente o proveedor en a3ERP borra también sus cuentas.** Verificado en
-  OUTDOOR (proyecto RocRoi, 2026-10), en un ensayo local y en producción, con 19 fichas:
+  una BD de cliente (proyecto RocRoi, 2026-10), en un ensayo local y en producción, con 19 fichas:
   - a3ERP **no pregunta nada** sobre las cuentas. Borra la ficha, su organización y sus direcciones,
     y todas sus **cuentas propias** (las que no usa ninguna otra ficha) **sin apuntes**, en los dos
     planes: la 430/400/410, la 431/401 de efectos, la 4311 de descuento y la 438/407 de anticipos.
@@ -83,9 +83,9 @@ grupo, subgrupo, cuenta, subcuenta de detalle).
     apuntes ni cartera. Después: comprobar que no falta ninguna cuenta que referencie una ficha que
     se queda. El recuento total de `CUENTAS` solo es informativo.
 - La cuenta 438 de anticipos de los clientes solo existía en **NPGC**; el resto de cuentas propias,
-  en los dos planes (OUTDOOR). Por eso el número de cuentas por ficha puede no ser par.
+  en los dos planes (una BD de cliente). Por eso el número de cuentas por ficha puede no ser par.
 - **`CARTERA` no tiene columna de cuenta.** Para saber si una cuenta de cliente o proveedor tiene
-  efectos hay que filtrar por `CODCLI` / `CODPRO` y por la cuenta de descuento `CTADES` (OUTDOOR,
+  efectos hay que filtrar por `CODCLI` / `CODPRO` y por la cuenta de descuento `CTADES` (una BD de cliente,
   2026-10).
 - Detalle completo del análisis para EBITDA (grupos PGC relevantes, magnitudes reales verificadas)
   en el repo del proyecto: `Dashboards/EBITDA/docs/esquema-contable-ebitda.md`.

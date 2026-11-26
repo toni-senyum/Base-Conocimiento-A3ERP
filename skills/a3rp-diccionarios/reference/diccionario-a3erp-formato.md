@@ -2,7 +2,7 @@
 
 Este documento recoge, sin editar el relato, lo aprendido inspeccionando librerías reales y
 generando desde cero (sin GUI) el diccionario `PERSONACC` (Senyum → INTEMAN, campo
-`SEN_CODPERSONA` en `CENTROSC`, FK a `PERSONA`), validado end-to-end en X_DEMO en septiembre de
+`SEN_CODPERSONA` en `CENTROSC`, FK a `PERSONA`), validado end-to-end en una BD de pruebas en septiembre de
 2026. Es la fuente de la que se ha extraído el resumen operativo en `SKILL.md`, sección B — léelo
 si necesitas más contexto o precisión que el resumen, o si algo no cuadra con lo que ves en un
 diccionario real y quieres entender por qué.
@@ -105,7 +105,7 @@ reutilizada, probablemente un error de esa librería concreta; no se sigue ese p
 
 ## EXPERIMENTO — PERSONACC generado a mano, sin usar Diccionario.exe
 
-Experimento explícito pedido por el usuario sobre el entorno de pruebas (X_DEMO): generar los 15
+Experimento explícito pedido por el usuario sobre el entorno de pruebas: generar los 15
 XML de `PERSONACC` completamente a mano, sin abrir la GUI ni una vez, para comprobar si es viable.
 
 ### Qué se escribió
@@ -204,12 +204,12 @@ Restrictiva). El campo `TipoRelacionU` quedó en `"R"` (Restrictiva) en la versi
 caso futuro necesita Cascada de verdad, confirmar el código cambiándolo desde el propio desplegable
 de la GUI y releyendo `Integridad.xml` después, en vez de adivinar por analogía con `"R"`.
 
-## Validación final end-to-end (X_DEMO)
+## Validación final end-to-end (una BD de pruebas)
 
 Confirmado correcto por el usuario ("Funciona perfecto!"):
 - Apertura sin errores en Diccionario.exe, guardado desde la GUI sin cambios de metadata
   inesperados.
-- Activación en la empresa X_DEMO ("Aplicar campos externos (diccionarios de terceros)" +
+- Activación en la empresa de pruebas ("Aplicar campos externos (diccionarios de terceros)" +
   librería `PERSONACC` activada).
 - El campo aparece en la ficha de Centro de Coste como desplegable (Combo).
 - Verificación SQL: la columna `SEN_CODPERSONA` existe en `CENTROSC` con el tipo correcto, la FK

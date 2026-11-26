@@ -12,7 +12,7 @@ asiento completo (verificado: `DEBE` y `HABER` cuadran exactos por asiento, part
 |---|---|---|---|
 | IDAPUNTE | `money` | No | Clave primaria real del apunte. |
 | NUMASIENTO | `money` | Sí | Clave de **agrupación** de apuntes en el mismo asiento — no es FK a otra tabla, es una secuencia propia de esta misma tabla. |
-| NUMAPUNTE | `money` | No | **Identificador del asiento para la API COM**: es lo que devuelve `Asiento.Anade()` y lo que espera `Opcion("EditAsiento")` en el parámetro `NumApunte`. Verificado en X_DEMO (2026-10, GestionImnovilizado): todos los apuntes de un asiento creado con `Asiento` comparten el mismo `NUMAPUNTE` (p. ej. 138754 con sus 3 apuntes). Relación exacta con `NUMASIENTO` no investigada. |
+| NUMAPUNTE | `money` | No | **Identificador del asiento para la API COM**: es lo que devuelve `Asiento.Anade()` y lo que espera `Opcion("EditAsiento")` en el parámetro `NumApunte`. Verificado en una BD de pruebas (2026-10, GestionImnovilizado): todos los apuntes de un asiento creado con `Asiento` comparten el mismo `NUMAPUNTE` (p. ej. 138754 con sus 3 apuntes). Relación exacta con `NUMASIENTO` no investigada. |
 | NUMLIN | `int` | No | Línea dentro del asiento. |
 | FECHA | `datetime` | Sí | Fecha del apunte — eje temporal; el ejercicio fiscal se deriva de `YEAR(FECHA)` (no existe tabla de ejercicios real, ver `PERIODOS`). |
 | IDCUENTA | `money` | No | FK real a `CUENTAS.IDCUENTA` — ver `CUENTAS.md`, recordar filtrar `PLACON='NPGC'` (o el plan activo del cliente). |
@@ -75,7 +75,7 @@ asiento completo (verificado: `DEBE` y `HABER` cuadran exactos por asiento, part
   grupo `68` viene necesariamente de `PROCEDE='AM'` (podría haber amortización manual); para
   clasificar por PGC, filtrar siempre por cuenta, no por `PROCEDE`.
 - **Centros de coste por defecto según la empresa.** En EHEALTH "sin centro" es `'       1'`; en
-  X_DEMO, los apuntes creados con `Asiento.AApunte` (sin analítica explícita) salen con `BCN/1/PB`.
+  una BD de pruebas, los apuntes creados con `Asiento.AApunte` (sin analítica explícita) salen con `BCN/1/PB`.
   Vienen de `DATOSCON.CENTROCOSTE/2/3` de cada empresa: no asumir un valor fijo.
 - Para localizar los apuntes creados por una DLL: `NUMAPUNTE > <máximo anterior>` y un patrón en
   `DESCAPU` (p. ej. `'%inmovilizado ' + código + ' %'`). Ojo con el padding de los códigos dentro del

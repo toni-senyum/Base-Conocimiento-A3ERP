@@ -1,7 +1,7 @@
 # Tabla: VINCULOS
 
 **Módulo A3ERP**: Transversal (documentos vinculados entre registros)
-**Tipo de objeto**: TABLE (`BASE TABLE`, confirmado contra `X_DEMO`, 2026-10)
+**Tipo de objeto**: TABLE (`BASE TABLE`, confirmado contra una BD de pruebas, 2026-10)
 **Descripción**: Vínculos entre registros de distintas tablas (lo que a3ERP muestra como documentos vinculados). Una fila = un vínculo padre → hijo.
 
 Explorada en el proyecto GestionImnovilizado (vínculo inmovilizado → factura de compra).
@@ -10,7 +10,7 @@ Explorada en el proyecto GestionImnovilizado (vínculo inmovilizado → factura 
 
 | Columna | Tipo | Nulo | Notas |
 |---|---|---|---|
-| A3DOC | `bit` | No | DEFAULT `0`. **Todos** los vínculos de X_DEMO (incluidos los no creados por la DLL) tienen `0`. GestionImnovilizado lo envía explícitamente a `0`. |
+| A3DOC | `bit` | No | DEFAULT `0`. **Todos** los vínculos de una BD de pruebas (incluidos los no creados por la DLL) tienen `0`. GestionImnovilizado lo envía explícitamente a `0`. |
 | IDENT | `varchar` | Sí | Clave del registro padre, **con el mismo padding que en su tabla** (para inmovilizado: `CODAMO` a 8 caracteres, `'      22'`). |
 | IDENTHIJO | `int` / numérico | Sí | Clave del registro hijo (p. ej. `IDFACC` de la factura de compra). |
 | TIPO | `varchar` | Sí | Tabla del padre. Valor visto: `Amortiza`. |
@@ -23,7 +23,7 @@ Explorada en el proyecto GestionImnovilizado (vínculo inmovilizado → factura 
 `A3DOC` verificado en el esquema (`bit NOT NULL DEFAULT 0`); en el resto, el tipo es el que usa la
 DLL al insertar y la nulabilidad no está comprobada.
 
-## Combinaciones vistas en X_DEMO
+## Combinaciones vistas en una BD de pruebas
 
 | TIPO / TIPOHIJO | Origen |
 |---|---|

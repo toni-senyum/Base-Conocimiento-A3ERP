@@ -32,11 +32,11 @@
 ## Notas / gotchas
 
 - **`CLIENTES` es VIEW, no tabla base** — confirmado en `INFORMATION_SCHEMA.TABLES`. Trae ya resueltos nombre/NIF/dirección desde `__ORGANIZACION`, por eso no hace falta un `JOIN` aparte para tener `NOMCLI`/`RAZON` pobladas.
-- **`NOMCLI` / `NOMFISCAL` / `RAZON`** (⚠️ corregido 2026-10, confirmado por Toni en el proyecto RocRoi, cargas de in&out en OUTDOOR): en la ficha de A3ERP, `NOMCLI` es el nombre de la **Organización**, `NOMFISCAL` la **Razón social** y `RAZON` el **nombre comercial**. Antes esta ficha decía que `RAZON` era la razón social fiscal: no lo es. En proveedores es igual (`NOMPRO`, `NOMFISCAL`, `RAZON`). Para listar o rankear clientes se sigue recomendando `NOMCLI`, que es lo que A3ERP trata como "nombre a mostrar" (p. ej. `CABEFACV.NOMCLI`, copia congelada del nombre en cada factura). En X_DEMO coinciden casi siempre, pero en datos migrados pueden diferir mucho (el comercial suele venir de otro sistema).
+- **`NOMCLI` / `NOMFISCAL` / `RAZON`** (⚠️ corregido 2026-10, confirmado en pruebas en el proyecto RocRoi, cargas de in&out en una BD de cliente): en la ficha de A3ERP, `NOMCLI` es el nombre de la **Organización**, `NOMFISCAL` la **Razón social** y `RAZON` el **nombre comercial**. Antes esta ficha decía que `RAZON` era la razón social fiscal: no lo es. En proveedores es igual (`NOMPRO`, `NOMFISCAL`, `RAZON`). Para listar o rankear clientes se sigue recomendando `NOMCLI`, que es lo que A3ERP trata como "nombre a mostrar" (p. ej. `CABEFACV.NOMCLI`, copia congelada del nombre en cada factura). En una BD de pruebas coinciden casi siempre, pero en datos migrados pueden diferir mucho (el comercial suele venir de otro sistema).
 
 ## Tabla base `__CLIENTES`: campos de cuenta contable
 
-Verificado por SQL en OUTDOOR (proyecto RocRoi, 2026-10). Cada cliente tiene, al darlo de alta, sus **cuentas propias**, que a3ERP crea con el número del cliente:
+Verificado por SQL en una BD de cliente (proyecto RocRoi, 2026-10). Cada cliente tiene, al darlo de alta, sus **cuentas propias**, que a3ERP crea con el número del cliente:
 
 | Campo | Cuenta típica (cliente 4) | Qué es | Plan |
 |---|---|---|---|

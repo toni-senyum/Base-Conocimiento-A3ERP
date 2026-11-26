@@ -46,7 +46,7 @@ Documentos de apoyo fuera de las skills: `docs/herramientas/inout-maestros-clien
 | `ValidacionOfertasCompraCL` | DLL de eventos real: `Iniciar` + `Enlace.GetConexionDB`, formato de `Cabecera` | `Clientes\Federación Catalana Natacion\Desarrollos\A3ERPValidacionOfertasCompra\` |
 | INTEMAN | DLL de eventos `AntesDeGuardarDocumentoV2` sobre pedidos | (ver skill `a3rp-dll`) |
 | `GestionImnovilizado` (v1.2.0) | DLL de programas externos (alta/baja de inmovilizado), `Maestro`, `Asiento`, `Opcion`, SQL con ADODB, configuraciones Debug/DebugA3ERP/Release, identidad COM fija, `PathMap`, paquete con instalador y releases. Producto estándar, adaptado a `plantilla-proyecto` | `C:\SENYUM\GestionImnovilizado\` · GitHub `senyum-team/GestionImnovilizado` (rama `main`) |
-| RocRoi (OUTDOOR GLOBAL CORP) | Migración de maestros de clientes y proveedores con in&out (fusión con Business Central y correcciones): formato, cómo escribe in&out, direcciones, NIF-IVA, regímenes de IVA y borrado de fichas con sus cuentas. Resumen en `docs/herramientas/inout-maestros-clientes-proveedores.md` | `...\Clientes\RocRoi\Migracion\Tratameinto\00_ROCROI PALLARS SOBIRA SL\00_Documentacion_Migracion\` |
+| RocRoi | Migración de maestros de clientes y proveedores con in&out (fusión con Business Central y correcciones): formato, cómo escribe in&out, direcciones, NIF-IVA, regímenes de IVA y borrado de fichas con sus cuentas. Resumen en `docs/herramientas/inout-maestros-clientes-proveedores.md` | `...\Clientes\RocRoi\Migracion\Tratameinto\00_ROCROI PALLARS SOBIRA SL\00_Documentacion_Migracion\` |
 
 ## Cómo se cargan estas skills en Claude Code
 
