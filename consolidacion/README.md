@@ -45,7 +45,9 @@ Abrir Claude Code en `C:\SENYUM\base-conocimiento` y pedir "revisa la consolidac
 1. Leer las propuestas de `consolidacion` no fusionadas y `git diff main...consolidacion`.
 2. Presentar los cambios por número, correcciones primero. Toni dice cuáles acepta.
 3. Si acepta todo: `git merge --no-ff consolidacion`. Si acepta una parte: revertir en la rama lo rechazado y fusionar.
-4. Tras fusionar, recrear la rama `consolidacion` desde `main` (worktree incluido) para la siguiente pasada.
+4. Tras fusionar, **no borrar ni recrear** la rama ni su worktree: basta con avanzarla a `main`
+   (`git -C C:\SENYUM\base-conocimiento-consolidacion merge --ff-only main`) y hacer `git push origin main consolidacion`
+   (sin `--force`). Como `main` ya contiene la rama tras el merge, siempre es un avance directo.
 5. Lo rechazado se apunta en `propuestas/rechazados.md` para que el consolidador no lo vuelva a proponer.
 
 ## Si algo va mal
