@@ -69,8 +69,8 @@ Verificado por SQL en a3ERP v15 (una BD de pruebas v15; verificado en proyecto C
 | `NOMMODPED` | Pedido | |
 | `NOMMODOFE` | Oferta | |
 | `NOMMODFACALB` | — (no aparece en la ficha de cliente) | No interviene en "Según cliente" |
-| `ENVIARDOCEMAIL` | Casilla "Enviar por e-mail" del cliente | Reglas exactas no validadas frente al envío nativo |
-| `E_MAIL_DOCS` | Email para documentos | Se usa cuando no hay destinatarios configurados (no validado del todo) |
+| `ENVIARDOCEMAIL` | Casilla "Enviar documentos por email" del cliente | Desmarcada: a3ERP no envía nada. Marcada, a3ERP no deja guardar la ficha con `E_MAIL_DOCS` o los formatos de envío vacíos (incidencia 22101); en datos migrados puede haber fichas que no lo cumplan (no comprobado). Reglas del envío en `DestinatariosDocumentos.md` |
+| `E_MAIL_DOCS` | Email para documentos | Se propone cuando el tipo de documento no tiene destinatarios configurados; el email general (`E_MAIL`) no interviene en el envío de documentos (probado una vez, proyecto CertificadosCalidad, 2026-11) |
 
 - **Valor de los `NOMMOD*`**: a3ERP guarda el **nombre de fichero del modelo con extensión** (p. ej. `LSTIMPRALBV.000`), sin ruta.
 - **"Según datos generales"** en la ficha = `_DATGEN_`. En código en producción (verificado en proyecto ExportacionFacturasPDF, 2026-07) también se trata `_DATGENMULT_` (multiempresa: se resuelve con `TIPOSCON.IDMULTIEMP`). Vacío y NULL equivalen a "sin modelo propio".

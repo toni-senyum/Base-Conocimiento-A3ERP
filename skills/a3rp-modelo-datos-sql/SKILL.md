@@ -148,7 +148,7 @@ explorando A3ERP en varios proyectos:
 | Compras | Ver CABEPEDC en `comercial/PedidosCompraVenta.md`; CABEFACC (`facturacion/FacturasCompra.md`); líneas de compra en `LineasFactura.md` (IDFACC, CTACONL, BASEMONEDA); `__PROVEED` (`compras/Proveedores.md`) | 🔶 parcial (proyectos INTEMAN, GestionImnovilizado y RocRoi) |
 | Inmovilizado | AMORTIZA (`contabilidad/AMORTIZA.md`) | ✅ explorado (proyecto GestionImnovilizado, BD de pruebas 2026-10) |
 | Transversal / extensiones | VINCULOS, DLLS (`sistema/`) | ✅ explorado (proyecto GestionImnovilizado) |
-| Tesorería | `CARTERA`: solo una nota (no tiene columna de cuenta), en `contabilidad/CUENTAS.md` | ⏳ pendiente |
+| Tesorería | `CARTERA` (`tesoreria/CARTERA.md`: factura→efectos, agrupaciones, remesas, devoluciones); nota de cuentas en `contabilidad/CUENTAS.md` | 🔶 parcial (proyecto Drivers, BD demo 2026-11; cobro parcial, impagados, confirming y remesa al descuento sin comprobar) |
 
 Detalle de cada tabla en `docs/esquema/[modulo]/[tabla].md`.
 
